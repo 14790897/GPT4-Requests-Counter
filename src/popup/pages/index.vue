@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="p-4 bg-gray-100 ">
-    <h1 class="text-4xl font-bold mb-4">{{ message }}</h1>
+    <!-- <h1 class="text-4xl font-bold mb-4">{{ message }}</h1> -->
     <p class="text-lg bg-white p-4 rounded shadow mb-2">
       Count: <span class="font-semibold">{{ count }}</span>
     </p>

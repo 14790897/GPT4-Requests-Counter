@@ -3,6 +3,7 @@ const config = { subtree: true, characterData: true }
 
 let count = 0
 let lastOutput = ''
+let timeRemaining = 0
 let timer = null // 用于存储计时器
 const recordedIncrements = new Set() // 用于存储已经记录过的增量输出
 
@@ -60,24 +61,52 @@ const observer = new MutationObserver(callback)
 
 observer.observe(document.body, config)
 
-
 // 找到目标<textarea>元素
-const textarea = document.getElementById('prompt-textarea');
+const textarea = document.getElementById('prompt-textarea')
 
 // 创建一个新的元素用于显示计数
-const countText = document.createElement('p');
+// const countText = document.createElement('p')
 
 // 将图标元素插入到<textarea>元素的后面
 if (textarea) {
-  textarea.parentNode.insertBefore(countText, textarea.nextSibling);
-}else {
+  // textarea.parentNode.insertBefore(countText, textarea.nextSibling);
+  const result = await chrome.storage.local.get('count')
+  count = result.count || 0
+  textarea.placeholder = `Count: ${count} Time Remaining: ${timeRemaining}`
+} else {
   console.log('textarea not found.')
 }
+
+const updateData = async () => {
+  if (textarea) {
+    chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
+      timeRemaining = response.timeRemaining
+      timeRemaining = formattime(timeRemaining)
+      textarea.placeholder = `Count: ${count}   Time Remaining: ${timeRemaining}`
+    })
+  } else {
+    console.log('textarea not found.')
+  }
+}
+
+function formattime(timeRemaining) {
+  const hours = Math.floor(timeRemaining / 3600)
+  const minutes = Math.floor((timeRemaining % 3600) / 60)
+  const seconds = timeRemaining % 60
+  return `${hours} hours ${minutes} minutes ${seconds} seconds`
+}
+
+// 立即更新一次数据
+updateData()
+
+// 每隔五秒更新一次数据
+setInterval(updateData, 10000)
 
 // 监听计数的变化
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (changes.count) {
     // 更新计数显示
-    countText.textContent = `Count: ${changes.count.newValue}`;
+    // countText.textContent = `Count: ${changes.count.newValue}`
+    textarea.placeholder = `Count: ${changes.count.newValue}   Time Remaining: ${timeRemaining}`
   }
-});
+})

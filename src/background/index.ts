@@ -1,3 +1,5 @@
+//计时器主要在这里执行
+
 let timer: any = null;
 let timeRemaining = 0;
 
@@ -9,6 +11,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     timer = setInterval(() => {
       timeRemaining -= 1;
       if (timeRemaining <= 0) {
+        chrome.storage.local.set({ count: 0, timerStarted: false })
         clearInterval(timer);
         timer = null;
       }

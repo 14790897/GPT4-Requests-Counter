@@ -3,7 +3,7 @@
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },
-  "description": "A Vue 3 + Vite project for building Chrome extensions",
+  "description": "这是一个用于记录ChatGPT提问次数以及显示距离三小时结束还有多久的插件",
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.18",
     "@iconify-json/mdi": "^1.1.54",
@@ -59,5 +59,5 @@
     "preview": "vite preview"
   },
   "type": "module",
-  "version": "0.0.1"
+  "version": "1.0.1"
 }

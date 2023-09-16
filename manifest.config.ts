@@ -29,11 +29,11 @@ export default defineManifest(async (env) => ({
     {
       all_frames: false,
       js: ['src/content-script/index.ts'],
-      matches: ['*://*/*'],
+      matches: ['*://chat.openai.com/*', '*://*.chat.openai.com/*'],
       run_at: 'document_end',
     },
   ],
-  host_permissions: ['*://*/*'],
+  // host_permissions: ['*://*/*'],
   options_page: 'src/options/index.html',
   permissions: ['storage', 'activeTab'],
   web_accessible_resources: [
