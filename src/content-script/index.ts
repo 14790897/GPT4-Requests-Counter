@@ -68,14 +68,27 @@ const textarea = document.getElementById('prompt-textarea')
 // const countText = document.createElement('p')
 
 // 将图标元素插入到<textarea>元素的后面
-if (textarea) {
-  // textarea.parentNode.insertBefore(countText, textarea.nextSibling);
-  const result = await chrome.storage.local.get('count')
-  count = result.count || 0
-  textarea.placeholder = `Count: ${count} Time Remaining: ${timeRemaining}`
-} else {
-  console.log('textarea not found.')
+async function updateTextarea() {
+  const textarea = document.getElementById('prompt-textarea');
+  
+  if (textarea) {
+    try {
+      // 获取存储的计数
+      const result = await chrome.storage.local.get('count');
+      const count = result.count || 0;
+      // 假设 timeRemaining 是在这个作用域内可用的
+      // 更新 textarea 的 placeholder
+      textarea.placeholder = `Count: ${count} Time Remaining: ${timeRemaining}`;
+    } catch (error) {
+      console.error('Failed to get count from storage:', error);
+    }
+  } else {
+    console.log('textarea not found.');
+  }
 }
+
+// 调用这个函数以更新 textarea
+updateTextarea();
 
 const updateData = async () => {
   if (textarea) {

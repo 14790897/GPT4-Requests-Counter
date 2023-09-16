@@ -3,7 +3,7 @@
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },
-  "description": "这是一个用于记录ChatGPT提问次数以及显示距离三小时结束还有多久的插件",
+  "description": "__MSG_extensionDescription__",
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.18",
     "@iconify-json/mdi": "^1.1.54",
@@ -35,8 +35,8 @@
     "vue-tsc": "^1.8.8",
     "webext-bridge": "^6.0.1"
   },
-  "displayName": "Vite Vue 3 Chrome Extension",
-  "name": "vite-vue3-chrome-extension-v3",
+  "displayName": "GPT4-Requests-Counter",
+  "name": "gpt4requestscounter",
   "overrides": {
     "@crxjs/vite-plugin": "$@crxjs/vite-plugin"
   },
