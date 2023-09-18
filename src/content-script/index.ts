@@ -112,7 +112,7 @@ function formattime(timeRemaining) {
 // 立即更新一次数据
 updateData()
 
-// 每隔五秒更新一次数据
+// 每隔10秒更新一次数据
 setInterval(updateData, 10000)
 
 // 监听计数的变化

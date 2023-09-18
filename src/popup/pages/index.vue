@@ -12,7 +12,6 @@
 
 <script setup lang="ts">
 
-const message = 'GPT4-Requests-Counter';
 const count = ref(0);
 const timeRemaining = ref(0);
 let timer; 
