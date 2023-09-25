@@ -26,7 +26,7 @@ onMounted(() => {
     timeRemaining.value = response.timeRemaining;
   });
 
-  // 设置一个定时器来每秒更新 timeRemaining
+  // 设置一个定时器来每秒更新 timeRemaining， 通过向service worker发送信息获取
   timer = setInterval(() => {
     if (timeRemaining.value > 0) {
       timeRemaining.value--;

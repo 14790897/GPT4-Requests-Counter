@@ -20,12 +20,26 @@ const startTimer = () => {
 const callback = async function (mutationsList, observer) {
   for (const mutation of mutationsList) {
     if (mutation.type === 'characterData') {
-      const parentNode = mutation.target.parentNode.parentNode // 获取父节点
+      let parentNode = mutation.target.parentNode.parentNode // 获取父节点  && parentNode.classList.contains('markdown')
+      // 循环遍历所有父节点，直到找到一个包含特定data-testid属性或到达根节点
+      while (parentNode) {
+        if (parentNode.getAttribute) {
+          const testId = parentNode.getAttribute('data-testid')
+          if (testId && /^conversation-turn-\d+$/.test(testId)) {
+            // 找到了，现在parentNode就是要找的节点
+            break
+          }
+        }
+        parentNode = parentNode.parentNode;
+      }
       console.log('parentNode', parentNode)
-      if (parentNode && parentNode.classList.contains('markdown')) {
-        // 如果是markdown元素
+      if (parentNode ) {
         const currentOutput = parentNode.textContent // 获取当前文本节点内的所有文本
-        const increment = currentOutput.replace(lastOutput, '') // 计算增量输出
+        if (currentOutput.includes(lastOutput)) {
+          increment = currentOutput.replace(lastOutput, '') // 计算增量输出
+        } else {
+          break
+        }
         lastOutput = currentOutput // 更新上一次的输出
         console.log('增量输出：', increment)
         if (increment && !recordedIncrements.has(parentNode)) {
@@ -34,6 +48,8 @@ const callback = async function (mutationsList, observer) {
             const result = await chrome.storage.local.get('count')
             count = result.count || 0
             count++
+            // lastOutput = ''
+            // recordedIncrements = new set()
             await chrome.storage.local.set({ count })
           } catch (error) {
             console.error('获取count失败', error)
@@ -44,7 +60,7 @@ const callback = async function (mutationsList, observer) {
           chrome.storage.local.get('timerStarted', (result) => {
             if (!result.timerStarted) {
               chrome.storage.local.set({ timerStarted: true })
-              startTimer()
+              // startTimer()// todo 这里可能不用再写一次
               chrome.runtime.sendMessage({
                 timerStarted: true,
                 duration: 3 * 60 * 60 * 1000,
@@ -61,65 +77,110 @@ const observer = new MutationObserver(callback)
 
 observer.observe(document.body, config)
 
-// 找到目标<textarea>元素
-const textarea = document.getElementById('prompt-textarea')
-
-// 创建一个新的元素用于显示计数
-// const countText = document.createElement('p')
-
-// 将图标元素插入到<textarea>元素的后面
-async function updateTextarea() {
-  const textarea = document.getElementById('prompt-textarea');
-  
-  if (textarea) {
-    try {
-      // 获取存储的计数
-      const result = await chrome.storage.local.get('count');
-      const count = result.count || 0;
-      // 假设 timeRemaining 是在这个作用域内可用的
-      // 更新 textarea 的 placeholder
-      textarea.placeholder = `Count: ${count} Time Remaining: ${timeRemaining}`;
-    } catch (error) {
-      console.error('Failed to get count from storage:', error);
-    }
-  } else {
-    console.log('textarea not found.');
-  }
-}
-
-// 调用这个函数以更新 textarea
-updateTextarea();
-
-const updateData = async () => {
-  if (textarea) {
-    chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
-      timeRemaining = response.timeRemaining
-      timeRemaining = formattime(timeRemaining)
-      textarea.placeholder = `Count: ${count}   Time Remaining: ${timeRemaining}`
-    })
-  } else {
+async function updateTextareaAndTime() {
+  const textarea = document.getElementById('prompt-textarea')
+  if (!textarea) {
     console.log('textarea not found.')
+    return
+  }
+
+  let count = 0
+  let timeRemaining = 0
+
+  try {
+    const result = await chrome.storage.local.get('count')
+    count = result.count || 0
+  } catch (error) {
+    console.error('Failed to get count from storage:', error)
+  }
+
+  try {
+    chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Failed to get time remaining:', chrome.runtime.lastError)
+        return
+      }
+      timeRemaining = response.timeRemaining
+      const formattedTime = formatTime(timeRemaining)
+      textarea.placeholder = `Count: ${count}   Time Remaining: ${formattedTime}`
+    })
+  } catch (error) {
+    console.error('Failed to get time remaining:', error)
   }
 }
 
-function formattime(timeRemaining) {
-  const hours = Math.floor(timeRemaining / 3600)
-  const minutes = Math.floor((timeRemaining % 3600) / 60)
-  const seconds = timeRemaining % 60
+function formatTime(timeInSeconds) {
+  const hours = Math.floor(timeInSeconds / 3600)
+  const minutes = Math.floor((timeInSeconds % 3600) / 60)
+  const seconds = timeInSeconds % 60
   return `${hours} hours ${minutes} minutes ${seconds} seconds`
 }
 
 // 立即更新一次数据
-updateData()
+updateTextareaAndTime()
 
 // 每隔10秒更新一次数据
-setInterval(updateData, 10000)
+setInterval(updateTextareaAndTime, 10000)
 
 // 监听计数的变化
-chrome.storage.onChanged.addListener((changes, namespace) => {
+chrome.storage.onChanged.addListener((changes) => {
   if (changes.count) {
-    // 更新计数显示
-    // countText.textContent = `Count: ${changes.count.newValue}`
-    textarea.placeholder = `Count: ${changes.count.newValue}   Time Remaining: ${timeRemaining}`
+    updateTextareaAndTime()
   }
 })
+
+// async function updateTextarea() {
+//   // 每次都重新获取 textarea，以防它被动态添加或删除
+//   const textarea = document.getElementById('prompt-textarea')
+
+//   if (textarea) {
+//     try {
+//       // 获取存储的计数
+//       const result = await chrome.storage.local.get('count')
+//       const count = result.count || 0
+//       // 假设 timeRemaining 是在这个作用域内可用的
+//       // 更新 textarea 的 placeholder
+//       textarea.placeholder = `Count: ${count} Time Remaining: ${timeRemaining}`
+//     } catch (error) {
+//       console.error('Failed to get count from storage:', error)
+//     }
+//   } else {
+//     console.log('textarea not found.')
+//   }
+// }
+
+// // 调用这个函数以更新 textarea
+// updateTextarea()
+
+// const updateTime = async () => {
+//   if (textarea) {
+//     chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
+//       timeRemaining = response.timeRemaining
+//       timeRemaining = formattime(timeRemaining)
+//       textarea.placeholder = `Count: ${count}   Time Remaining: ${timeRemaining}`
+//     })
+//   } else {
+//     console.log('textarea not found.')
+//   }
+// }
+
+// function formattime(timeRemaining) {
+//   const hours = Math.floor(timeRemaining / 3600)
+//   const minutes = Math.floor((timeRemaining % 3600) / 60)
+//   const seconds = timeRemaining % 60
+//   return `${hours} hours ${minutes} minutes ${seconds} seconds`
+// }
+
+// // 立即更新一次数据
+// updateTime()
+
+// // 每隔10秒更新一次剩余时间数据
+// setInterval(updateTime, 10000)
+
+// // 监听计数的变化
+// chrome.storage.onChanged.addListener((changes, namespace) => {
+//   if (changes.count) {
+//     // 更新计数显示
+//     updateTextarea() // 调用函数以更新 textarea
+//   }
+// })
