@@ -4,6 +4,9 @@
     <p class="text-lg bg-white p-4 rounded shadow mb-2">
       Count: <span class="font-semibold">{{ count }}</span>
     </p>
+    <p class="text-lg bg-white p-4 rounded shadow mb-2">
+      Today All Count: <span class="font-semibold">{{ todayAllCount }}</span>
+    </p>
     <p v-if="timeRemaining > 0" class="text-lg bg-white p-4 rounded shadow">
       Time Remaining: <span class="font-semibold">{{ formattedTime }}</span>
     </p>
@@ -13,13 +16,18 @@
 <script setup lang="ts">
 
 const count = ref(0);
+const todayAllCount = ref(0);
 const timeRemaining = ref(0);
-let timer; 
+let timer;
 
 // 在组件挂载后设置 Chrome 运行时消息监听器
 onMounted(() => {
   chrome.storage.local.get('count', (result) => {
     count.value = result.count || 0;
+  });
+
+  chrome.storage.local.get('todayAllCount', (result) => {
+    todayAllCount.value = result.todayAllCount || 0;
   });
 
   chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
