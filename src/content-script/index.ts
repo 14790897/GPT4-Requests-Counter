@@ -3,6 +3,7 @@ const config = { subtree: true, characterData: true }
 
 let lastOutput = '1111111111111111111111111111111111111111111111111111111111...'
 const recordedIncrements = new Set() // 用于存储已经记录过的增量输出
+const nodeTimers = new Map() // 用于存储每个节点的定时器
 
 const callback = async function (mutationsList, observer) {
   for (const mutation of mutationsList) {
@@ -60,6 +61,19 @@ const callback = async function (mutationsList, observer) {
             console.error('获取count失败', error)
           }
           recordedIncrements.add(parentNode) // 将这个增量添加到已记录的集合中
+          // 清除旧的定时器（如果存在）
+          if (nodeTimers.has(parentNode)) {
+            clearTimeout(nodeTimers.get(parentNode));
+          }
+
+          // 设置新的定时器
+          const timer = setTimeout(() => {
+            recordedIncrements.delete(parentNode);
+            nodeTimers.delete(parentNode);
+          }, 10000); // 10秒后清除
+
+          // 存储新的定时器
+          nodeTimers.set(parentNode, timer);
         }
       }
     }

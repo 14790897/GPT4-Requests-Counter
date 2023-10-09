@@ -23,5 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 *.zip
-*.zip
-*.zip
+dist.zip
