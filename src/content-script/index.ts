@@ -126,7 +126,7 @@ const callback = async function (mutationsList, observer) {
                   // } else {
                   //   console.error('未找到期望的位置节点, 用户不在dalle3模块');
                   // }
-                  // recordedIncrements.delete(parentNode);
+                  recordedIncrements.delete(parentNode);
                   nodeTimers.delete(parentNode);
                   console.log("清除定时器成功")
                 } catch (error) {
