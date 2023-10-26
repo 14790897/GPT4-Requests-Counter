@@ -2,48 +2,48 @@
 const config = { subtree: true, characterData: true }
 
 let lastOutput = '1111111111111111111111111111111111111111111111111111111111...'
-let positionNode;  // 定义变量
+// let positionNode;  // 定义变量
 let hasNewChanges = false;  // 创建一个标志来追踪是否有新的变化
 const recordedIncrements = new Set() // 用于存储已经记录过的增量输出
 const nodeTimers = new Map() // 用于存储每个节点的定时器
 
-function splitOnSecondPeriod(text: string) {
-  // 首先，找到第一个句号的位置
-  const firstPeriodIndex = text.indexOf('.');
-  if (firstPeriodIndex === -1) {
-      return [text, ''];  // 如果没有句号，返回整个文本和空字符串
-  }
+// function splitOnSecondPeriod(text: string) {
+//   // 首先，找到第一个句号的位置
+//   const firstPeriodIndex = text.indexOf('.');
+//   if (firstPeriodIndex === -1) {
+//       return [text, ''];  // 如果没有句号，返回整个文本和空字符串
+//   }
 
-  // 然后，从第一个句号的位置开始，找到第二个句号的位置
-  const secondPeriodIndex = text.indexOf('.', firstPeriodIndex + 1);
-  if (secondPeriodIndex === -1) {
-      return [text, ''];  // 如果只有一个句号，返回整个文本和空字符串
-  }
+//   // 然后，从第一个句号的位置开始，找到第二个句号的位置
+//   const secondPeriodIndex = text.indexOf('.', firstPeriodIndex + 1);
+//   if (secondPeriodIndex === -1) {
+//       return [text, ''];  // 如果只有一个句号，返回整个文本和空字符串
+//   }
 
-  // 最后，根据第二个句号的位置将文本分开
-  const part1 = text.substring(0, secondPeriodIndex + 1);  // 包括第二个句号
-  const part2 = text.substring(secondPeriodIndex + 1);  // 从第二个句号之后开始
+//   // 最后，根据第二个句号的位置将文本分开
+//   const part1 = text.substring(0, secondPeriodIndex + 1);  // 包括第二个句号
+//   const part2 = text.substring(secondPeriodIndex + 1);  // 从第二个句号之后开始
 
-  return [part1, part2];
-}
+//   return [part1, part2];
+// }
 
-function styleTextarea(cloneText: string) {
-  const textElement = document.createElement('textarea');
+// function styleTextarea(cloneText: string) {
+//   const textElement = document.createElement('textarea');
 
-  textElement.textContent = cloneText;
+//   textElement.textContent = cloneText;
 
-  // 设置textarea的样式
-  textElement.style.width = '100%';  // 设置宽度为100%
-  textElement.style.height = '80px';  // 设置高度为80像素
-  textElement.style.padding = '10px';  // 设置内边距为10像素
-  textElement.style.borderRadius = '5px';  // 设置边框圆角为5像素
-  textElement.style.border = '1px solid #ccc';  // 设置边框为1像素实线，颜色为灰色
-  textElement.style.fontSize = '16px';  // 设置字体大小为16像素
-  textElement.style.fontFamily = 'Arial, sans-serif';  // 设置字体为Arial或sans-serif
-  textElement.style.backgroundColor = 'black';
-  textElement.style.color = 'white';
-  return textElement;
-}
+//   // 设置textarea的样式
+//   textElement.style.width = '100%';  // 设置宽度为100%
+//   textElement.style.height = '80px';  // 设置高度为80像素
+//   textElement.style.padding = '10px';  // 设置内边距为10像素
+//   textElement.style.borderRadius = '5px';  // 设置边框圆角为5像素
+//   textElement.style.border = '1px solid #ccc';  // 设置边框为1像素实线，颜色为灰色
+//   textElement.style.fontSize = '16px';  // 设置字体大小为16像素
+//   textElement.style.fontFamily = 'Arial, sans-serif';  // 设置字体为Arial或sans-serif
+//   textElement.style.backgroundColor = 'black';
+//   textElement.style.color = 'white';
+//   return textElement;
+// }
 
 const callback = async function (mutationsList, observer) {
   for (const mutation of mutationsList) {
@@ -114,18 +114,18 @@ const callback = async function (mutationsList, observer) {
               if (!hasNewChanges) {
                 // 如果没有新的增量，执行你的代码      
                 try {
-                  const [cloneText1, cloneText2] = splitOnSecondPeriod(parentNode.textContent);
-                  const textElement1 = styleTextarea(cloneText1) 
-                  const textElement2 = styleTextarea(cloneText2)
-                  positionNode = parentNode.querySelector('.grid.gap-4.grid-cols-2').parentNode.parentNode;
-                  if (positionNode) {
-                    positionNode.append(textElement1);
-                    console.log("增加文字内容成功textElement1:", textElement1)
-                    positionNode.append(textElement2);
-                    console.log("增加文字内容成功textElement2:", textElement2)
-                  } else {
-                    console.error('未找到期望的位置节点, 用户不在dalle3模块');
-                  }
+                  // const [cloneText1, cloneText2] = splitOnSecondPeriod(parentNode.textContent);
+                  // const textElement1 = styleTextarea(cloneText1) 
+                  // const textElement2 = styleTextarea(cloneText2)
+                  // positionNode = parentNode.querySelector('.grid.gap-4.grid-cols-2').parentNode.parentNode;
+                  // if (positionNode) {
+                  //   positionNode.append(textElement1);
+                  //   console.log("增加文字内容成功textElement1:",     textElement1)
+                  //   positionNode.append(textElement2);
+                  //   console.log("增加文字内容成功textElement2:", textElement2)
+                  // } else {
+                  //   console.error('未找到期望的位置节点, 用户不在dalle3模块');
+                  // }
                   // recordedIncrements.delete(parentNode);
                   nodeTimers.delete(parentNode);
                   console.log("清除定时器成功")
