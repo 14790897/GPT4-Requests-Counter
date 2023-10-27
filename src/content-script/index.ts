@@ -29,51 +29,54 @@ const callback = async function (mutationsList, observer) {
         } //这里可不能随便在else的时候加break,一旦break之后整个循环都会停止,不会检测到新的变化
         lastOutput = currentOutput // 更新上一次的输出
         console.log('增量输出：', increment)
-        if (increment && !recordedIncrements.has(parentNode)) {
-          console.log('已经进入count增加')
-          // 如果有增量输出，并且这个增量是新的
-          try {
-            const result = await chrome.storage.local.get('count')
-            let count = result.count || 0
-            count++
-            // recordedIncrements = new set()
-            // 如果这是第一次计时，开始计时
-            const { timerStarted } =
-              await chrome.storage.local.get('timerStarted')
-            if (!timerStarted) {
-              // await chrome.storage.local.set({ timerStarted: true })
-              chrome.runtime.sendMessage({
-                timerStarted: true,
-                duration: 3 * 60 * 60 * 1000,
-              }) // 发送倒计时开始的消息，同时在背景脚本中记录当前的时间，这个应该在count设置之前执行
-            }
-            console.log('count====================================', count)
-            await chrome.storage.local.set({ count })
+        if (increment) {
+          if (!recordedIncrements.has(parentNode)) {
+            console.log('已经进入count增加')
+            // 如果有增量输出，并且这个增量是新的
+            try {
+              const result = await chrome.storage.local.get('count')
+              let count = result.count || 0
+              count++
+              // recordedIncrements = new set()
+              // 如果这是第一次计时，开始计时
+              const { timerStarted } =
+                await chrome.storage.local.get('timerStarted')
+              if (!timerStarted) {
+                // await chrome.storage.local.set({ timerStarted: true })
+                chrome.runtime.sendMessage({
+                  timerStarted: true,
+                  duration: 3 * 60 * 60 * 1000,
+                }) // 发送倒计时开始的消息，同时在背景脚本中记录当前的时间，这个应该在count设置之前执行
+              }
+              console.log('count====================================', count)
+              await chrome.storage.local.set({ count })
 
-            const { countOutput } = await chrome.storage.local.get('count')
-            console.log(
-              'countOutput====================================',
-              countOutput
-            )
-            lastOutput =
-              '1111111111111111111111111111111111111111111111111111111111...'
-          } catch (error) {
-            console.error('获取count失败', error)
+              const { countOutput } = await chrome.storage.local.get('count')
+              console.log(
+                'countOutput====================================',
+                countOutput
+              )
+              lastOutput =
+                '1111111111111111111111111111111111111111111111111111111111...'
+            } catch (error) {
+              console.error('获取count失败', error)
+            }
+            recordedIncrements.add(parentNode) // 将这个增量添加到已记录的集合中
           }
-          recordedIncrements.add(parentNode) // 将这个增量添加到已记录的集合中
+          //只要有这样输出,就执行下面的代码,清除节点主要是防止为了这个列表过大，浪费资源
           // 清除旧的定时器（如果存在）
           if (nodeTimers.has(parentNode)) {
-            clearTimeout(nodeTimers.get(parentNode));
+            clearTimeout(nodeTimers.get(parentNode))
           }
 
           // 设置新的定时器
           const timer = setTimeout(() => {
-            recordedIncrements.delete(parentNode);
-            nodeTimers.delete(parentNode);
-          }, 10000); // 10秒后清除
+            recordedIncrements.delete(parentNode)
+            nodeTimers.delete(parentNode)
+          }, 10000) // 10秒后清除
 
           // 存储新的定时器
-          nodeTimers.set(parentNode, timer);
+          nodeTimers.set(parentNode, timer)
         }
       }
     }
