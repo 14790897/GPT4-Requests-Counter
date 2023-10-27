@@ -77,6 +77,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         duration: 0,
         todayAllCount: 0,
         lastUpdatedDate: new Date().toDateString(),
+        lastIncrementTime: 0,
       },
       function () {
         console.log('Default values set.')

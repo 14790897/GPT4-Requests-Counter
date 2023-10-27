@@ -29,7 +29,13 @@ const callback = async function (mutationsList, observer) {
         } //这里可不能随便在else的时候加break,一旦break之后整个循环都会停止,不会检测到新的变化
         lastOutput = currentOutput // 更新上一次的输出
         console.log('增量输出：', increment)
-        if (increment) {
+
+        const now = Date.now();
+        let { lastIncrementTime } = await chrome.storage.local.get('lastIncrementTime')// 用于存储上一次增量输出的时间
+        if (increment && now - lastIncrementTime >= 300) {//只有间隔0.3秒钟以上才能再增加
+          lastIncrementTime = now;  // 更新上次增加的时间
+          await chrome.storage.local.set({ lastIncrementTime })
+
           if (!recordedIncrements.has(parentNode)) {
             console.log('已经进入count增加')
             // 如果有增量输出，并且这个增量是新的
