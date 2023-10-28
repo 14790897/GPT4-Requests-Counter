@@ -1,11 +1,20 @@
 // content.js
-const config = { subtree: true, characterData: true }
+
 
 let lastOutput = '1111111111111111111111111111111111111111111111111111111111...'
 const recordedIncrements = new Set() // 用于存储已经记录过的增量输出
 const nodeTimers = new Map() // 用于存储每个节点的定时器
+let isLocked = false;  // 锁标志
+
 
 const callback = async function (mutationsList, observer) {
+   // 检查锁是否已经被设置
+  if (isLocked) {
+     console.log('锁已经被设置')
+    return;  // 如果锁已经被设置，则直接返回，不执行后续代码
+  }
+
+  isLocked = true;  // 设置锁
   for (const mutation of mutationsList) {
     if (mutation.type === 'characterData') {
       let parentNode = mutation.target.parentNode.parentNode // 获取父节点  && parentNode.classList.contains('markdown')
@@ -28,7 +37,7 @@ const callback = async function (mutationsList, observer) {
           increment = currentOutput.replace(lastOutput, '') // 计算增量输出
         } //这里可不能随便在else的时候加break,一旦break之后整个循环都会停止,不会检测到新的变化
         lastOutput = currentOutput // 更新上一次的输出
-        console.log('增量输出：', increment)
+        // console.log('增量输出：', increment)·
 
         const now = Date.now();
         let { lastIncrementTime } = await chrome.storage.local.get('lastIncrementTime')// 用于存储上一次增量输出的时间
@@ -87,10 +96,13 @@ const callback = async function (mutationsList, observer) {
       }
     }
   }
+  console.log('解锁')
+  isLocked = false;  // 释放锁
 }
 
 const observer = new MutationObserver(callback)
 
+const config = { subtree: true, characterData: true }
 observer.observe(document.body, config)
 
 async function updateTextareaAndTime() {
