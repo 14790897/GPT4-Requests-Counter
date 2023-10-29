@@ -1,12 +1,10 @@
 <template>
   <div id="app" class="p-4 bg-gray-100 ">
-   
-
     <p class="text-lg bg-white p-4 rounded shadow mb-2">
       Count: <span class="font-semibold">{{ count }}</span>
     </p>
     <p class="text-lg bg-white p-4 rounded shadow mb-2">
-      Today All Count: <span class="font-semibold">{{ todayAllCount }}</span>
+      Today All Counts: <span class="font-semibold">{{ todayAllCount }}</span>
     </p>
     <p v-if="timeRemaining > 0" class="text-lg bg-white p-4 rounded shadow mb-2">
       Time Remaining: <span class="font-semibold">{{ formattedTime }}</span>
