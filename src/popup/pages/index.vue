@@ -1,15 +1,19 @@
 <template>
   <div id="app" class="p-4 bg-gray-100 ">
-    <!-- <h1 class="text-4xl font-bold mb-4">{{ message }}</h1> -->
+   
+
     <p class="text-lg bg-white p-4 rounded shadow mb-2">
       Count: <span class="font-semibold">{{ count }}</span>
     </p>
     <p class="text-lg bg-white p-4 rounded shadow mb-2">
       Today All Count: <span class="font-semibold">{{ todayAllCount }}</span>
     </p>
-    <p v-if="timeRemaining > 0" class="text-lg bg-white p-4 rounded shadow">
+    <p v-if="timeRemaining > 0" class="text-lg bg-white p-4 rounded shadow mb-2">
       Time Remaining: <span class="font-semibold">{{ formattedTime }}</span>
     </p>
+    <div class="flex justify-center items-center">
+    <button class="p-2 bg-white rounded shadow" @click="openChart">history chart</button>
+    </div>
   </div>
 </template>
 
@@ -18,7 +22,7 @@
 const count = ref(0);
 const todayAllCount = ref(0);
 const timeRemaining = ref(0);
-let timer;
+let timer: number;
 
 // 在组件挂载后设置 Chrome 运行时消息监听器
 onMounted(() => {
@@ -48,6 +52,11 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(timer);
 });
+
+// 打开图表页面
+const openChart = () => {
+  chrome.runtime.openOptionsPage()
+};
 
 const formattedTime = computed(() => {
   const hours = Math.floor(timeRemaining.value / 3600);

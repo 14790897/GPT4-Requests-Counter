@@ -8,9 +8,15 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       await chrome.storage.local.get('lastUpdatedDate')
 
     if (currentDate !== lastUpdatedDate) {
-      const todayAllCount = 0 // 如果是新的一天，重置今日计数
+      //如果是新的一天, 将昨日的键更新到同步存储中
+      const { todayAllCount } = await chrome.storage.local.get('todayAllCount')
+      const { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
+      dateAndCount[lastUpdatedDate] = todayAllCount
+      await chrome.storage.sync.set({ dateAndCount })
+
+      // 如果是新的一天，重置今日计数
       await chrome.storage.local.set({
-        todayAllCount,
+        todayAllCount: 0,
         lastUpdatedDate: currentDate,
       })
     }
@@ -50,6 +56,10 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
           timerStarted: false,
           todayAllCount: Number(todayAllCount) + Number(count),
         })
+        //每次三小时结束之后，更新图表数据
+        const { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
+        dateAndCount[lastUpdatedDate] = todayAllCount
+        await chrome.storage.sync.set({ dateAndCount })
       }
       console.log('Time remaining:', roundedTimeRemaining)
       sendResponse({ timeRemaining: roundedTimeRemaining })

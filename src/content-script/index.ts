@@ -150,7 +150,7 @@ function formatTime(timeInSeconds: number) {
 // 立即更新一次数据
 updateTextareaAndTime()
 
-// 每隔10秒更新一次数据
+// 每隔1秒更新一次数据
 setInterval(updateTextareaAndTime, 1000)
 
 // 监听计数的变化
