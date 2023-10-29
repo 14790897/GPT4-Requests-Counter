@@ -15,89 +15,94 @@ const callback = async function (mutationsList, observer) {
   }
 
   isLocked = true;  // 设置锁
-  for (const mutation of mutationsList) {
-    if (mutation.type === 'characterData') {
-      let parentNode = mutation.target.parentNode.parentNode // 获取父节点  && parentNode.classList.contains('markdown')
-      // 循环遍历所有父节点，直到找到一个包含特定data-testid属性或到达根节点
-      while (parentNode) {
-        if (parentNode.getAttribute) {
-          const testId = parentNode.getAttribute('data-testid')
-          // console.log('testId', testId)
-          if (testId && /^conversation-turn-\d+$/.test(testId)) {
-            // 找到了，现在parentNode就是要找的节点
-            break
-          }
-        }
-        parentNode = parentNode.parentNode
-      }
-      if (parentNode) {
-        let increment
-        const currentOutput = parentNode.textContent // 获取当前文本节点内的所有文本
-        if (currentOutput.includes(lastOutput)) {
-          increment = currentOutput.replace(lastOutput, '') // 计算增量输出
-        } //这里可不能随便在else的时候加break,一旦break之后整个循环都会停止,不会检测到新的变化
-        lastOutput = currentOutput // 更新上一次的输出
-        // console.log('增量输出：', increment)·
-
-        const now = Date.now();
-        let { lastIncrementTime } = await chrome.storage.local.get('lastIncrementTime')// 用于存储上一次增量输出的时间
-        if (increment && now - lastIncrementTime >= 300) {//只有间隔0.3秒钟以上才能再增加
-          lastIncrementTime = now;  // 更新上次增加的时间
-          await chrome.storage.local.set({ lastIncrementTime })
-
-          if (!recordedIncrements.has(parentNode)) {
-            console.log('已经进入count增加')
-            // 如果有增量输出，并且这个增量是新的
-            try {
-              const result = await chrome.storage.local.get('count')
-              let count = result.count || 0
-              count++
-              // recordedIncrements = new set()
-              // 如果这是第一次计时，开始计时
-              const { timerStarted } =
-                await chrome.storage.local.get('timerStarted')
-              if (!timerStarted) {
-                // await chrome.storage.local.set({ timerStarted: true })
-                chrome.runtime.sendMessage({
-                  timerStarted: true,
-                  duration: 3 * 60 * 60 * 1000,
-                }) // 发送倒计时开始的消息，同时在背景脚本中记录当前的时间，这个应该在count设置之前执行
-              }
-              console.log('count====================================', count)
-              await chrome.storage.local.set({ count })
-
-              const { countOutput } = await chrome.storage.local.get('count')
-              console.log(
-                'countOutput====================================',
-                countOutput
-              )
-              lastOutput =
-                '1111111111111111111111111111111111111111111111111111111111...'
-            } catch (error) {
-              console.error('获取count失败', error)
+  try {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'characterData') {
+        let parentNode = mutation.target.parentNode.parentNode // 获取父节点  && parentNode.classList.contains('markdown')
+        // 循环遍历所有父节点，直到找到一个包含特定data-testid属性或到达根节点
+        while (parentNode) {
+          if (parentNode.getAttribute) {
+            const testId = parentNode.getAttribute('data-testid')
+            // console.log('testId', testId)
+            if (testId && /^conversation-turn-\d+$/.test(testId)) {
+              // 找到了，现在parentNode就是要找的节点
+              break
             }
-            recordedIncrements.add(parentNode) // 将这个增量添加到已记录的集合中
           }
-          //只要有这样输出,就执行下面的代码,清除节点主要是防止为了这个列表过大，浪费资源
-          // 清除旧的定时器（如果存在）
-          if (nodeTimers.has(parentNode)) {
-            clearTimeout(nodeTimers.get(parentNode))
+          parentNode = parentNode.parentNode
+        }
+        if (parentNode) {
+          let increment
+          const currentOutput = parentNode.textContent // 获取当前文本节点内的所有文本
+          if (currentOutput.includes(lastOutput)) {
+            increment = currentOutput.replace(lastOutput, '') // 计算增量输出
+          } //这里可不能随便在else的时候加break,一旦break之后整个循环都会停止,不会检测到新的变化
+          lastOutput = currentOutput // 更新上一次的输出
+          // console.log('增量输出：', increment)·
+
+          const now = Date.now();
+          let { lastIncrementTime } = await chrome.storage.local.get('lastIncrementTime')// 用于存储上一次增量输出的时间
+          if (increment && now - lastIncrementTime >= 300) {//只有间隔0.3秒钟以上才能再增加
+            lastIncrementTime = now;  // 更新上次增加的时间
+            await chrome.storage.local.set({ lastIncrementTime })
+
+            if (!recordedIncrements.has(parentNode)) {
+              console.log('已经进入count增加')
+              // 如果有增量输出，并且这个增量是新的
+              try {
+                const result = await chrome.storage.local.get('count')
+                let count = result.count || 0
+                count++
+                // recordedIncrements = new set()
+                // 如果这是第一次计时，开始计时
+                const { timerStarted } =
+                  await chrome.storage.local.get('timerStarted')
+                if (!timerStarted) {
+                  // await chrome.storage.local.set({ timerStarted: true })
+                  chrome.runtime.sendMessage({
+                    timerStarted: true,
+                    duration: 3 * 60 * 60 * 1000,
+                  }) // 发送倒计时开始的消息，同时在背景脚本中记录当前的时间，这个应该在count设置之前执行
+                }
+                console.log('count====================================', count)
+                await chrome.storage.local.set({ count })
+
+                const { countOutput } = await chrome.storage.local.get('count')
+                console.log(
+                  'countOutput====================================',
+                  countOutput
+                )
+                lastOutput =
+                  '1111111111111111111111111111111111111111111111111111111111...'
+              } catch (error) {
+                console.error('获取count失败', error)
+              }
+              recordedIncrements.add(parentNode) // 将这个增量添加到已记录的集合中
+            }
+            //只要有这样输出,就执行下面的代码,清除节点主要是防止为了这个列表过大，浪费资源
+            // 清除旧的定时器（如果存在）
+            if (nodeTimers.has(parentNode)) {
+              clearTimeout(nodeTimers.get(parentNode))
+            }
+
+            // 设置新的定时器
+            const timer = setTimeout(() => {
+              recordedIncrements.delete(parentNode)
+              nodeTimers.delete(parentNode)
+            }, 10000) // 10秒后清除
+
+            // 存储新的定时器
+            nodeTimers.set(parentNode, timer)
           }
-
-          // 设置新的定时器
-          const timer = setTimeout(() => {
-            recordedIncrements.delete(parentNode)
-            nodeTimers.delete(parentNode)
-          }, 10000) // 10秒后清除
-
-          // 存储新的定时器
-          nodeTimers.set(parentNode, timer)
         }
       }
     }
+  } catch (error) {
+    console.error('Failed to process mutations:', error)
+  } finally {
+    console.log('解锁')
+    isLocked = false;  // 释放锁
   }
-  console.log('解锁')
-  isLocked = false;  // 释放锁
 }
 
 const observer = new MutationObserver(callback)

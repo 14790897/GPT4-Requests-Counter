@@ -2,6 +2,7 @@
 //计时器主要在这里执行
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   try {
+    //首先判断是否新的一天，如果是的话，重置今日计数
     const currentDate = new Date().toDateString() // 获取当前日期(几号)字符串
     const { lastUpdatedDate } =
       await chrome.storage.local.get('lastUpdatedDate')
@@ -13,7 +14,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         lastUpdatedDate: currentDate,
       })
     }
-
+    //然后根据信息中的timerStarted判断是否开始计时，如果是的话，设置开始时间和持续时间
     if (message.timerStarted) {
       const startTime = Date.now()
       const duration = message.duration
@@ -22,8 +23,8 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         duration,
         timerStarted: true,
         lastUpdatedDate: currentDate,
-        // count: 1,
       })
+      //如果是获取剩余时间的话，就执行下面的操作
     } else if (message.request === 'getTimeRemaining') {
       const result = await chrome.storage.local.get([
         'timerStarted',
@@ -59,7 +60,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   }
 })
 
-// 第一个监听器，立即返回 true 以保持消息端口开启
+// 第一个监听器，立即返回 true 以保持消息端口开启（因为await异步，遇到这个会暂时跳过，以为已经完成了）
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true // Indicate that response will be sent asynchronously
 })
