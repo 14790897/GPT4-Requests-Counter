@@ -28,18 +28,10 @@ export async function startTimer(duration: number) {
   })
 }
 
-export async function getTimeRemaining() {
-  const result = await chrome.storage.local.get([
-    'timerStarted',
-    'startTime',
-    'duration',
-  ])
-  if (!result.timerStarted) {
-    return 0 // 结束函数执行
-  }
+export async function getTimeRemaining(startTime:number, duration:number) {
   const currentTime = Date.now()
-  const elapsedTime = currentTime - result.startTime
-  const timeRemaining = Math.max(0, (result.duration - elapsedTime) / 1000)
+  const elapsedTime = currentTime - startTime
+  const timeRemaining = Math.max(0, (duration - elapsedTime) / 1000)
   const roundedTimeRemaining = Math.round(timeRemaining) // 四舍五入到最接近的整数
   return roundedTimeRemaining
 }

@@ -25,10 +25,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         sendResponse({ timeRemaining: 0 })
         return // 结束函数执行
       }
-      const currentTime = Date.now()
-      const elapsedTime = currentTime - result.startTime
-      const timeRemaining = Math.max(0, (result.duration - elapsedTime) / 1000)
-      const roundedTimeRemaining = Math.round(timeRemaining) // 四舍五入到最接近的整数
+      const roundedTimeRemaining = await getTimeRemaining(result.startTime, result.duration)
 
       if (roundedTimeRemaining <= 0) {
         const { todayAllCount, count } = await chrome.storage.local.get([
