@@ -11,12 +11,12 @@
     </p>
     <div class="flex justify-center items-center">
     <button class="p-2 bg-white rounded shadow" @click="openChart">history chart</button>
+    <button class="p-2 bg-white rounded shadow" @click="generateWordcloud">today wordcloud</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-
 const count = ref(0);
 const todayAllCount = ref(0);
 const timeRemaining = ref(0);
@@ -55,6 +55,11 @@ onUnmounted(() => {
 const openChart = () => {
   chrome.runtime.openOptionsPage()
 };
+
+//使用echarts生成词云
+const generateWordcloud = async() => {
+  window.open('../../components/wordcloud.html')
+}
 
 const formattedTime = computed(() => {
   const hours = Math.floor(timeRemaining.value / 3600);

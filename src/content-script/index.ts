@@ -86,7 +86,10 @@ const callback = async function (mutationsList, observer) {
             }
 
             // 设置新的定时器
-            const timer = setTimeout(() => {
+            const timer = setTimeout(async () => {
+              let {todayChat} = await chrome.storage.local.get('todayChat')
+              todayChat += parentNode.textContent
+              await chrome.storage.local.set({todayChat})
               recordedIncrements.delete(parentNode)
               nodeTimers.delete(parentNode)
             }, 10000) // 10秒后清除
