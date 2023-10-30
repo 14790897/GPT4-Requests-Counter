@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 *.zip
 dist.zip
+venv
