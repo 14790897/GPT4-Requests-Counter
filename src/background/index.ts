@@ -9,13 +9,9 @@ import {
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   try {
-    //首先判断是否新的一天，如果是的话，重置今日计数
     const { lastUpdatedDate } =
       await chrome.storage.local.get('lastUpdatedDate')
-    const currentDate = new Date().toDateString() // 获取当前日期(几号)字符串
-    if (currentDate !== lastUpdatedDate) {
-      resetDailyCountAndUpdate(lastUpdatedDate)
-    }
+
     //然后根据信息中的timerStarted判断是否开始计时，如果是的话，设置开始时间和持续时间
     if (message.timerStarted) {
       await startTimer(message.duration)
@@ -27,6 +23,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         'duration',
       ])
       if (!result.timerStarted) {
+        console.log('Timer not started. Time remaining is 0.')
         sendResponse({ timeRemaining: 0 })
         return // 结束函数执行
       }
@@ -35,9 +32,12 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         result.duration
       )
       if (roundedTimeRemaining <= 0) {
+        console.log('Timer expired. Updating counts and chart data.')
         await updateCountsAndChartData(lastUpdatedDate)
+        const currentDate = new Date().toDateString() // 获取当前日期(几号)字符串
+        resetDailyCountAndUpdate(lastUpdatedDate, currentDate)
       }
-      console.log('Time remaining:', roundedTimeRemaining)
+      // console.log('Time remaining:', roundedTimeRemaining)
       sendResponse({ timeRemaining: roundedTimeRemaining })
     }
   } catch (error) {
