@@ -1,20 +1,25 @@
 //我觉得可以在这里主动向popup和content script发送信息而不是被动地向他们发送，实际上这样也可以,因为这样的话，service worker可以停止工作
 //计时器主要在这里执行
-import { resetDailyCountAndUpdate, startTimer, getTimeRemaining, updateCountsAndChartData } from './utils.js';
+import {
+  resetDailyCountAndUpdate,
+  startTimer,
+  getTimeRemaining,
+  updateCountsAndChartData,
+} from './utils.js'
+
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   try {
     //首先判断是否新的一天，如果是的话，重置今日计数
     const { lastUpdatedDate } =
-    await chrome.storage.local.get('lastUpdatedDate')
-    
+      await chrome.storage.local.get('lastUpdatedDate')
     const currentDate = new Date().toDateString() // 获取当前日期(几号)字符串
     if (currentDate !== lastUpdatedDate) {
       resetDailyCountAndUpdate(lastUpdatedDate)
     }
     //然后根据信息中的timerStarted判断是否开始计时，如果是的话，设置开始时间和持续时间
     if (message.timerStarted) {
-      await startTimer(message.duration);
-    }//如果是获取剩余时间的话，就执行下面的操作
+      await startTimer(message.duration)
+    } //如果是获取剩余时间的话，就执行下面的操作
     else if (message.request === 'getTimeRemaining') {
       const result = await chrome.storage.local.get([
         'timerStarted',
@@ -25,22 +30,12 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         sendResponse({ timeRemaining: 0 })
         return // 结束函数执行
       }
-      const roundedTimeRemaining = await getTimeRemaining(result.startTime, result.duration)
-
+      const roundedTimeRemaining = await getTimeRemaining(
+        result.startTime,
+        result.duration
+      )
       if (roundedTimeRemaining <= 0) {
-        const { todayAllCount, count } = await chrome.storage.local.get([
-          'todayAllCount',
-          'count',
-        ])
-        await chrome.storage.local.set({
-          count: 0,
-          timerStarted: false,
-          todayAllCount: Number(todayAllCount) + Number(count),
-        })
-        //每次三小时结束之后，更新图表数据
-        const { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
-        dateAndCount[lastUpdatedDate] = todayAllCount
-        await chrome.storage.sync.set({ dateAndCount })
+        await updateCountsAndChartData(lastUpdatedDate)
       }
       console.log('Time remaining:', roundedTimeRemaining)
       sendResponse({ timeRemaining: roundedTimeRemaining })
