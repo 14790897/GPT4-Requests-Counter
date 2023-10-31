@@ -37,14 +37,9 @@ export default defineConfig({
           baseRoute: 'popup',
         },
         {
-          dir: 'src/wordcloud/pages',
-          baseRoute: 'wordcloud',
-        },
-        {
           dir: 'src/content-script/iframe/pages',
           baseRoute: 'iframe',
         },
-
       ],
     }),
 

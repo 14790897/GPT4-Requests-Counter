@@ -13,6 +13,8 @@
     <button class="p-2 bg-white rounded shadow" @click="openChart">history chart</button>
     <button class="p-2 bg-white rounded shadow" @click="generateWordcloud">today wordcloud</button>
     </div>
+      <!-- 条件渲染 WordCloud 组件 -->
+      <WordCloud v-if="showWordCloud" />
   </div>
 </template>
 
@@ -21,6 +23,8 @@ const count = ref(0);
 const todayAllCount = ref(0);
 const timeRemaining = ref(0);
 let timer: number;
+const showWordCloud = ref(false);  // 定义一个新的响应式属性
+
 
 // 在组件挂载后设置 Chrome 运行时消息监听器
 onMounted(() => {
@@ -58,15 +62,7 @@ const openChart = () => {
 
 //使用echarts生成词云
 const generateWordcloud = async() => {
-  const url = chrome.runtime.getURL('src/wordcloud/index.html');
-  console.log('URL:', url);  // 用于调试的日志语句
-  chrome.tabs.create({ url: url }, (tab) => {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);  // 输出任何创建新标签时遇到的错误
-    } else {
-      console.log('Tab created:', tab);  // 输出创建的标签的信息
-    }
-  });
+  showWordCloud.value = true;  // 点击按钮时显示 WordCloud 组件
 }
 
 const formattedTime = computed(() => {

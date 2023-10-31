@@ -17,7 +17,7 @@ const chartContainer = ref(null);
 const generateWordcloud = async () => {
   const { todayChat } = await chrome.storage.local.get('todayChat');
   if (!todayChat) {
-    console.error('Error: Failed to retrieve todayChat from local storage');
+    console.error('Error: Failed to retrieve todayChat from chrome.storage.local');
     return;
   }
   try {

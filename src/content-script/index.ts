@@ -23,7 +23,7 @@ const callback = async function (mutationsList, observer) {
         while (parentNode) {
           if (parentNode.getAttribute) {
             const testId = parentNode.getAttribute('data-testid')
-            // console.log('testId', testId)
+            console.log('testId', testId)
             if (testId && /^conversation-turn-\d+$/.test(testId)) {
               // 找到了，现在parentNode就是要找的节点
               break
