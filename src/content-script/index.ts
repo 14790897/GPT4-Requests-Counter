@@ -23,7 +23,7 @@ const callback = async function (mutationsList, observer) {
         while (parentNode) {
           if (parentNode.getAttribute) {
             const testId = parentNode.getAttribute('data-testid')
-            console.log('testId', testId)
+            // console.log('testId', testId)
             if (testId && /^conversation-turn-\d+$/.test(testId)) {
               // 找到了，现在parentNode就是要找的节点
               break
@@ -38,7 +38,7 @@ const callback = async function (mutationsList, observer) {
             increment = currentOutput.replace(lastOutput, '') // 计算增量输出
           } //这里可不能随便在else的时候加break,一旦break之后整个循环都会停止,不会检测到新的变化
           lastOutput = currentOutput // 更新上一次的输出
-          // console.log('增量输出：', increment)·
+          // console.log('增量输出：', increment)
 
           const now = Date.now();
           let { lastIncrementTime } = await chrome.storage.local.get('lastIncrementTime')// 用于存储上一次增量输出的时间
