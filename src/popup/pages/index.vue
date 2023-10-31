@@ -58,7 +58,7 @@ const openChart = () => {
 
 //使用echarts生成词云
 const generateWordcloud = async() => {
-  const url = chrome.runtime.getURL('src/components/wordcloud.html');
+  const url = chrome.runtime.getURL('src/wordcloud/index.html');
   console.log('URL:', url);  // 用于调试的日志语句
   chrome.tabs.create({ url: url }, (tab) => {
     if (chrome.runtime.lastError) {
