@@ -23,6 +23,10 @@ export default defineManifest(async (env) => ({
   version_name: version,
   manifest_version: 3,
   // key: 'ekgmcbpgglflmgcfajnglpbcbdccnnje',
+  content_security_policy: {
+    "extension_pages": "script-src 'self'; object-src 'self'",
+    "sandbox": "sandbox allow-scripts; script-src 'self'"
+  },
   action: {
     default_popup: 'src/popup/index.html',
   },
