@@ -39,7 +39,7 @@ export default defineManifest(async (env) => ({
   ],
   // host_permissions: ['*://*/*'],
   options_page: 'src/options/index.html',
-  permissions: ['storage'],
+  permissions: ['storage', 'tabs'],
   web_accessible_resources: [
     {
       matches: ['*://*/*'],
@@ -49,5 +49,9 @@ export default defineManifest(async (env) => ({
       matches: ['*://*/*'],
       resources: ['src/content-script/iframe/index.html'],
     },
+    {
+      "matches": ['*://*/*'],
+      "resources": ["src/components/wordcloud.html"]
+  }
   ],
 }))
