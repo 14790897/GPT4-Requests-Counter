@@ -223,15 +223,17 @@ example.run();
 """
 
 
+import jieba
 from langdetect import detect
 import jieba.analyse
 import json
+
 # from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 def extract_keywords(text):
     language = detect(text)  # 检测文本的语言
-    print('language:', language)
+    print("language:", language)
     # if language == 'zh-cn' or language == 'zh-tw':  # 如果文本是中文
     keywords = jieba.analyse.extract_tags(text, topK=10, withWeight=False, allowPOS=())
     # else:  # 如果文本是英文或其他语言
@@ -243,30 +245,46 @@ def extract_keywords(text):
 
     return keywords
 
+
 # 使用函数
-keywords = extract_keywords(text)
-print(keywords)
+# keywords = extract_keywords(text)
+# print(keywords)
+
 
 def lambda_handler(event, context):
-    if 'text' not in event:
+    headers = {
+        "Access-Control-Allow-Origin": "*",  # 允许所有源的访问，你也可以指定某个特定的源
+        "Access-Control-Allow-Credentials": "true",  # 如果需要，允许凭据（例如cookies）
+        "Access-Control-Allow-Headers": "Content-Type",  # 允许的请求头
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET",  # 允许的HTTP方法
+    }
+    try:
+        # 解析 body 字段中的 JSON 字符串
+        body = json.loads(event["body"])
+    except (KeyError, json.JSONDecodeError):
         return {
-        'statusCode': 400,
-        'body': json.dumps({
-            'error': 'Missing text parameter',
-            'event': event
-        })
-      }
-    text = event['text']  # Assume the text to analyze is passed as a "text" parameter in the event object
+            "statusCode": 400,
+            "headers": headers,
+            "body": json.dumps(
+                {
+                    "error": "Missing or invalid JSON body",
+                    "event": event,
+                    # 'body': body
+                }
+            ),
+        }
+
+    if "text" not in body:
+        return {
+            "statusCode": 400,
+            "headers": headers,
+            "body": json.dumps({"error": "Missing text parameter"}),
+        }
+
+    text = body["text"]
     keywords = extract_keywords(text)
     return {
-        'statusCode': 200,
-        'body': json.dumps({
-            'keywords': keywords
-        })
+        "statusCode": 200,
+        "headers": headers,
+        "body": json.dumps({"keywords": keywords}),
     }
-    
-    
-    
-    
-    
-    
