@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 创建一个新的div来显示收到的数据 -->
-    <div>{{ responseContent }}</div>
+    <!-- <div>{{ responseContent }}</div> -->
     <div id="chart2" ref="chartContainer" class="w-full h-96 mb-4"></div>
   </div>
 </template>
@@ -12,7 +12,7 @@ import 'echarts-wordcloud';
 // import axios from 'axios';
 
 const chartContainer = ref(null);
-const responseContent = ref('');  // 新创建的ref用于存储收到的数据
+// const responseContent = ref('');  // 新创建的ref用于存储收到的数据
 
 const generateWordcloud = async () => {
   const { todayChat } = await chrome.storage.local.get('todayChat');
@@ -38,7 +38,7 @@ const generateWordcloud = async () => {
     //   'https://nwkazoq0sc.execute-api.ap-southeast-2.amazonaws.com/production/',
     //   { text: todayChat }
     // );
-    responseContent.value = JSON.stringify(words.keywords, null, 2);  // 更新 responseContent 的值
+    // responseContent.value = JSON.stringify(words.keywords, null, 2);  // 更新 responseContent 的值
 
     // 检查 chartContainer ref 是否已经设置
     console.log('chartContainer.value', chartContainer.value)
