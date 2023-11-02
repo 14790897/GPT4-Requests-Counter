@@ -22,6 +22,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         'startTime',
         'duration',
       ])
+      //timerStarted是从storage中取出的
       if (!result.timerStarted) {
         console.log('Timer not started. Time remaining is 0.')
         sendResponse({ timeRemaining: 0 })
@@ -35,7 +36,10 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         console.log('Timer expired. Updating counts and chart data.')
         await updateCountsAndChartData(lastUpdatedDate)
         const currentDate = new Date().toDateString() // 获取当前日期(几号)字符串
-        resetDailyCountAndUpdate(lastUpdatedDate, currentDate)
+        //一天结束后会运行下面的函数
+        if (currentDate !== lastUpdatedDate) {
+          resetDailyCountAndUpdate(lastUpdatedDate, currentDate)
+        }
       }
       // console.log('Time remaining:', roundedTimeRemaining)
       sendResponse({ timeRemaining: roundedTimeRemaining })

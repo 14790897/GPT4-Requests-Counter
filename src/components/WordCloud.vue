@@ -2,6 +2,8 @@
   <div>
     <title>Word Cloud</title>
     <div id="app">
+      <!-- 创建一个新的div来显示收到的数据 -->
+      <div>{{ responseContent }}</div>
       <div ref="chartContainer" style="width: 600px; height: 400px;"></div>
     </div>
   </div>
@@ -13,6 +15,7 @@ import * as echarts from 'echarts';
 import axios from 'axios';
 
 const chartContainer = ref(null);
+const responseContent = ref('');  // 新创建的ref用于存储收到的数据
 
 const generateWordcloud = async () => {
   const { todayChat } = await chrome.storage.local.get('todayChat');
@@ -25,18 +28,21 @@ const generateWordcloud = async () => {
       'https://nwkazoq0sc.execute-api.ap-southeast-2.amazonaws.com/production/',
       { text: todayChat }
     );
+    responseContent.value = JSON.stringify(words.data, null, 2);  // 更新 responseContent 的值
+
 
     // 检查 chartContainer ref 是否已经设置
     if (chartContainer.value) {
       // 初始化 ECharts 实例
       const chart = echarts.init(chartContainer.value);
-
+      console.log(chart);  // 查看ECharts实例
+      console.log(words.data.keywords)
       // 配置图表选项
       const option = {
         series: [
           {
             type: 'wordCloud',
-            data: words.keywords.map((word) => {
+            data: words.data.keywords.map((word: string) => {
               return {
                 name: word,
                 value: 1, // 假设所有的词有相同的权重

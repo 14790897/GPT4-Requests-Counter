@@ -258,6 +258,15 @@ def lambda_handler(event, context):
         "Access-Control-Allow-Headers": "Content-Type",  # 允许的请求头
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",  # 允许的HTTP方法
     }
+    
+    # 检查是否是OPTIONS请求，如果是，则直接返回允许CORS的头
+    if event['httpMethod'] == 'OPTIONS':
+        return {
+            "statusCode": 200,
+            "headers": headers,
+            "body": json.dumps({"message": "CORS configuration successful"}),
+        }
+
     try:
         # 解析 body 字段中的 JSON 字符串
         body = json.loads(event["body"])

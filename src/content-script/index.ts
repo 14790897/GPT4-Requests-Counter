@@ -89,6 +89,7 @@ const callback = async function (mutationsList, observer) {
             const timer = setTimeout(async () => {
               let {todayChat} = await chrome.storage.local.get('todayChat')
               todayChat += parentNode.textContent
+              console.log('todayChat已增加', todayChat)
               await chrome.storage.local.set({todayChat})
               recordedIncrements.delete(parentNode)
               nodeTimers.delete(parentNode)
