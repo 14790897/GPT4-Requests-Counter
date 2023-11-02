@@ -25,3 +25,4 @@ dist-ssr
 *.zip
 dist.zip
 venv
+min.html

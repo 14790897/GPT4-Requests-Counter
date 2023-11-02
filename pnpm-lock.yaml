@@ -11,6 +11,9 @@ dependencies:
   echarts:
     specifier: ^5.4.3
     version: 5.4.3
+  echarts-wordcloud:
+    specifier: ^2.1.0
+    version: 2.1.0(echarts@5.4.3)
   vue:
     specifier: ^3.3.4
     version: 3.3.4
@@ -2185,6 +2188,14 @@ packages:
       domelementtype: 2.3.0
       domhandler: 5.0.3
     dev: true
+
+  /echarts-wordcloud@2.1.0(echarts@5.4.3):
+    resolution: {integrity: sha512-Kt1JmbcROgb+3IMI48KZECK2AP5lG6bSsOEs+AsuwaWJxQom31RTNd6NFYI01E/YaI1PFZeueaupjlmzSQasjQ==}
+    peerDependencies:
+      echarts: ^5.0.1
+    dependencies:
+      echarts: 5.4.3
+    dev: false
 
   /echarts@5.4.3:
     resolution: {integrity: sha512-mYKxLxhzy6zyTi/FaEbJMOZU1ULGEQHaeIeuMR5L+JnJTpz+YR03mnnpBhbR4+UYJAgiXgpyTVLffPAjOTLkZA==}

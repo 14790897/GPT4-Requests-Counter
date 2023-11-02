@@ -1,6 +1,5 @@
 <template>
   <div class="m-4 p-4 bg-white rounded shadow-lg">
-    <!-- <h1 class="text-2xl font-bold mb-4 text-gray-800">Chart</h1> -->
     <div id="chart" ref="chartRef" class="w-full h-96 mb-4"></div>
   </div>
 </template>
