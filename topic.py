@@ -235,7 +235,7 @@ def extract_keywords(text):
     language = detect(text)  # 检测文本的语言
     print("language:", language)
     # if language == 'zh-cn' or language == 'zh-tw':  # 如果文本是中文
-    keywords = jieba.analyse.extract_tags(text, topK=10, withWeight=False, allowPOS=())
+    keywords = jieba.analyse.extract_tags(text, topK=10, withWeight=True, allowPOS=())
     # else:  # 如果文本是英文或其他语言
     #     vectorizer = TfidfVectorizer()
     #     tfidf_matrix = vectorizer.fit_transform([text])
@@ -247,8 +247,10 @@ def extract_keywords(text):
 
 
 # 使用函数
-# keywords = extract_keywords(text)
-# print(keywords)
+# Main的时候运行下面代码
+if __name__ == '__main__':
+  keywords = extract_keywords(text)
+  print(keywords)
 
 
 def lambda_handler(event, context):

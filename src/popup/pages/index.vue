@@ -12,6 +12,8 @@
     <div class="flex justify-center items-center">
     <button class="p-2 bg-white rounded shadow" @click="openChart">history chart</button>
     <button class="p-2 bg-white rounded shadow" @click="generateWordcloud">today wordcloud</button>
+    <!-- <button class="p-2 bg-white rounded shadow" @click="generateWordcloud2">today wordcloud2
+    </button> -->
     </div>
       <!-- 条件渲染 WordCloud 组件 -->
       <WordCloud v-if="showWordCloud" />
@@ -71,4 +73,16 @@ const formattedTime = computed(() => {
   const seconds = timeRemaining.value % 60;
   return `${hours} hours ${minutes} minutes ${seconds} seconds`;
 })
+
+const generateWordcloud2 = async () => {
+  const url = chrome.runtime.getURL('./wordcloud.html');
+  console.log('URL:', url);
+  chrome.tabs.create({ url: url }, (tab) => {
+    if (chrome.runtime.lastError) {
+      console.error(chrome.runtime.lastError);
+    } else {
+      console.log('Tab created:', tab);
+    }
+  });
+}
 </script>

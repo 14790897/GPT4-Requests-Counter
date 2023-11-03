@@ -10,6 +10,7 @@
 import * as echarts from 'echarts';
 import 'echarts-wordcloud';
 // import axios from 'axios';
+type KeywordWithWeight = [string, number];
 
 const chartContainer = ref(null);
 // const responseContent = ref('');  // 新创建的ref用于存储收到的数据
@@ -41,30 +42,32 @@ const generateWordcloud = async () => {
     // responseContent.value = JSON.stringify(words.keywords, null, 2);  // 更新 responseContent 的值
 
     // 检查 chartContainer ref 是否已经设置
-    console.log('chartContainer.value', chartContainer.value)
+    console.log('words', words)
     if (chartContainer.value) {
       // 初始化 ECharts 实例
       const chart = echarts.init(chartContainer.value);
       console.log(chart);  // 查看ECharts实例
-      // console.log(words.data.keywords)
       // 配置图表选项
       const option = {
+         toolbox: {
+          feature: {
+            saveAsImage: {
+              show: true,  // 显示下载按钮
+              title: '下载图表',  // 下载按钮的提示文字
+              pixelRatio: 2,  // 下载的图像分辨率
+            }
+          }
+        },
         series: [
           {
             type: 'wordCloud',
-            // The shape of the "cloud" to draw. Can be any polar equation represented as a
-            // callback function, or a keyword present. Available presents are circle (default),
-            // cardioid (apple or heart shape curve, the most known polar equation), diamond (
-            // alias of square), triangle-forward, triangle, (alias of triangle-upright, pentagon, and star.
+
 
             shape: 'circle',
 
-            // Keep aspect ratio of maskImage or 1:1 for shapes
-            // This option is supported from echarts-wordcloud@2.1.0
+
             keepAspect: false,
 
-            // Folllowing left/top/width/height/right/bottom are used for positioning the word cloud
-            // Default to be put in the center and has 75% x 80% size.
 
             left: 'center',
             top: 'center',
@@ -73,27 +76,14 @@ const generateWordcloud = async () => {
             right: null,
             bottom: null,
 
-            // Text size range which the value in data will be mapped to.
-            // Default to have minimum 12px and maximum 60px size.
-
             sizeRange: [12, 60],
-
-            // Text rotation range and step in degree. Text will be rotated randomly in range [-90, 90] by rotationStep 45
 
             rotationRange: [-90, 90],
             rotationStep: 45,
 
-            // size of the grid in pixels for marking the availability of the canvas
-            // the larger the grid size, the bigger the gap between words.
-
             gridSize: 8,
 
-            // set to true to allow word being draw partly outside of the canvas.
-            // Allow word bigger than the size of the canvas to be drawn
             drawOutOfBound: false,
-
-            // If perform layout animation.
-            // NOTE disable it will lead to UI blocking when there is lots of words.
             layoutAnimation: true,
 
             // Global text style
@@ -118,15 +108,11 @@ const generateWordcloud = async () => {
                 textShadowColor: '#333'
               }
             },
-            // data: [{
-            //   name: 'Farrah Abraham',
-            //   value: 366,
-            //   // ...
-            // }]
-            data: words.keywords.map((word: string) => {
+
+            data: words.keywords.map((item: KeywordWithWeight) => {
               return {
-                name: word,
-                value: 2, // 假设所有的词有相同的权重
+                name: item[0],  // 词
+                value: item[1],  // 权重
               };
             }),
           },
