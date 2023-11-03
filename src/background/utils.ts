@@ -14,9 +14,10 @@ export async function resetDailyCountAndUpdate(
       dateAndCount[lastUpdatedDate] = todayAllCount
       await chrome.storage.sync.set({ dateAndCount })
 
-      // 如果是新的一天，重置今日计数
+      // 如果是新的一天，重置今日计数，清空todaychat
       await chrome.storage.local.set({
         todayAllCount: 0,
+        todayChat: '',
         lastUpdatedDate: currentDate,
       })
     } catch (error) {
