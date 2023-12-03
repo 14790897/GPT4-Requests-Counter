@@ -14,7 +14,11 @@ onMounted(async () => {
   const { dateAndCount } = await chrome.storage.sync.get('dateAndCount');
 
   // 准备图表数据
-  const dates = Object.keys(dateAndCount || {});
+    // 转换并排序日期
+  const dates = Object.keys(dateAndCount || {})
+    .map(dateStr => new Date(dateStr))
+    .sort((a, b) => a - b)
+    .map(dateObj => dateObj.toDateString());
   const counts = Object.values(dateAndCount || {});
   // const dates = [1, 2, 3, 4, 5, 6]
   // const counts = [1, 2, 3, 4, 5, 6]

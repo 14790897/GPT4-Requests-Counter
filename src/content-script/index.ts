@@ -30,6 +30,8 @@ const callback = async function (mutationsList, observer) {
         }
         parentNode = parentNode.parentNode
       }
+      //睡眠等待一秒钟
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       if (parentNode) {
         let increment
         const currentOutput = parentNode.textContent // 获取当前文本节点内的所有文本
@@ -105,7 +107,7 @@ const callback = async function (mutationsList, observer) {
   } catch (error) {
     console.error('Failed to process mutations:', error)
   } finally {
-    console.log('解锁')
+    console.log('上锁后进入函数主体执行后解锁')
     isLocked = false // 释放锁
   }
 }
