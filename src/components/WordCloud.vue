@@ -16,7 +16,10 @@ const chartContainer = ref(null);
 // const responseContent = ref('');  // 新创建的ref用于存储收到的数据
 
 const generateWordcloud = async () => {
-  const { todayChat } = await chrome.storage.local.get('todayChat');
+  let { todayChat } = await chrome.storage.local.get('todayChat');
+  //之前放入数据的时候修改了格式
+  todayChat = todayChat.replace(/User:|ChatGPT:/g, '');
+
   if (!todayChat) {
     console.error('Error: Failed to retrieve todayChat from chrome.storage.local');
     return;

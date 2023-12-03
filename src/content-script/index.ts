@@ -91,14 +91,18 @@ const callback = async function (mutationsList, observer) {
           // 设置新的定时器
           const timer = setTimeout(async () => {
             let { todayChat } = await chrome.storage.local.get('todayChat')
-            todayChat += parentNode.textContent
+            const previousNode = parentNode.previousElementSibling // 获取上一个兄弟节点
+            todayChat += `User:${previousNode.textContent}` // 获取用户输入的文本内容
+            todayChat += '\n' // 换行
+            todayChat += `ChatGPT:${parentNode.textContent}`
+            todayChat += '\n' // 换行
             console.log('todayChat已增加', todayChat)
             await chrome.storage.local.set({ todayChat })
             recordedIncrements.delete(parentNode)
             nodeTimers.delete(parentNode)
-          }, 10000) // 10秒后清除
+          }, 10000) // 10秒后清除，但是如果在十秒内如果对同一节点有新的回答输出就无法识别
 
-          // 存储新的定时器
+          // 存储新的定时器,用于再次循环的时候遇到同样的节点可以清除计时，这是为了在对话全部输出之后才删除节点
           nodeTimers.set(parentNode, timer)
         }
       }
@@ -167,6 +171,8 @@ chrome.storage.onChanged.addListener((changes) => {
     console.log('count变化了   in chrome.storage.onChanged.addListener')
   }
 })
+
+
 
 // let timer = null // 用于存储计时器
 // const startTimer = () => {
