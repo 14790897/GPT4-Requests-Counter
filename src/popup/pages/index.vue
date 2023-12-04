@@ -10,13 +10,17 @@
       Time Remaining: <span class="font-semibold">{{ formattedTime }}</span>
     </p>
     <div class="flex justify-center items-center">
-    <button class="p-2 bg-white rounded shadow" @click="openChart">history chart</button>
-    <button class="p-2 bg-white rounded shadow" @click="generateWordcloud">today wordcloud</button>
-    <!-- <button class="p-2 bg-white rounded shadow" @click="generateWordcloud2">today wordcloud2
+      <button class="p-2 bg-white rounded shadow" @click="openChart">history chart</button>
+      <button class="p-2 bg-white rounded shadow" @click="generateWordcloud">today wordcloud</button>
+      <!-- <button class="p-2 bg-white rounded shadow" @click="generateWordcloud2">today wordcloud2
     </button> -->
     </div>
-      <!-- 条件渲染 WordCloud 组件 -->
-      <WordCloud v-if="showWordCloud" />
+    <div class="flex justify-center items-center mt-4">
+      <button class="p-2 bg-white rounded shadow mr-2" @click="exportHTML">Export as HTML</button>
+      <button class="p-2 bg-white rounded shadow" @click="exportMarkdown">Export as Markdown</button>
+    </div>
+    <!-- 条件渲染 WordCloud 组件 -->
+    <WordCloud v-if="showWordCloud" />
   </div>
 </template>
 
@@ -63,7 +67,7 @@ const openChart = () => {
 };
 
 //使用echarts生成词云
-const generateWordcloud = async() => {
+const generateWordcloud = async () => {
   showWordCloud.value = true;  // 点击按钮时显示 WordCloud 组件
 }
 
@@ -73,6 +77,50 @@ const formattedTime = computed(() => {
   const seconds = timeRemaining.value % 60;
   return `${hours} hours ${minutes} minutes ${seconds} seconds`;
 })
+
+const exportMarkdown = async () => {
+  let { todayChat } = await chrome.storage.local.get('todayChat')
+  console.log('todayChat', todayChat)
+  if (!todayChat) {
+    todayChat = 'sorry, no chat';
+    console.log('todayChat导出失败：', todayChat)
+    return;
+  }
+  // 创建一个 Blob 对象，其内容为 todayChat 字符串，类型为 text/markdown
+  const blob = new Blob([todayChat], { type: 'text/markdown' });
+  download(blob)
+}
+const exportHTML = async () => {
+  let { todayChat } = await chrome.storage.local.get('todayChat')
+  if (!todayChat) {
+    todayChat = 'sorry, no chat';
+    console.log('todayChat导出失败：', todayChat)
+    return;
+  }
+  // 创建一个 Blob 对象，其内容为 todayChat 字符串，类型为 text/html
+  const blob = new Blob([todayChat], { type: 'text/html' });
+
+  download(blob)
+}
+
+const download = async (blob) => {
+  // 创建一个用于下载的 URL
+  const downloadUrl = window.URL.createObjectURL(blob);
+
+  // 创建一个临时的 a 元素用于触发下载
+  const downloadLink = document.createElement('a');
+  downloadLink.href = downloadUrl;
+  const date = new Date().toString();
+  downloadLink.download = `chat-${date}.md`; // 设置下载的文件名
+
+  // 将链接添加到 DOM 中（不可见），触发点击事件，然后移除
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+
+  // 清理创建的 URL
+  window.URL.revokeObjectURL(downloadUrl);
+}
 
 const generateWordcloud2 = async () => {
   const url = chrome.runtime.getURL('./wordcloud.html');

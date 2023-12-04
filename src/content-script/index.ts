@@ -92,10 +92,13 @@ const callback = async function (mutationsList, observer) {
           const timer = setTimeout(async () => {
             let { todayChat } = await chrome.storage.local.get('todayChat')
             const previousNode = parentNode.previousElementSibling // 获取上一个兄弟节点
-            todayChat += `User:${previousNode.textContent}` // 获取用户输入的文本内容
-            todayChat += '\n' // 换行
-            todayChat += `ChatGPT:${parentNode.textContent}`
-            todayChat += '\n' // 换行
+            todayChat += `You:${previousNode.textContent.replace(/You/g, '')}` // 获取用户输入的文本内容
+            todayChat += '\n\n' // 换行
+            todayChat += `ChatGPT:${parentNode.textContent.replace(
+              /ChatGPT/g,
+              ''
+            )}`
+            todayChat += '\n\n' // 换行
             console.log('todayChat已增加', todayChat)
             await chrome.storage.local.set({ todayChat })
             recordedIncrements.delete(parentNode)
@@ -171,8 +174,6 @@ chrome.storage.onChanged.addListener((changes) => {
     console.log('count变化了   in chrome.storage.onChanged.addListener')
   }
 })
-
-
 
 // let timer = null // 用于存储计时器
 // const startTimer = () => {
