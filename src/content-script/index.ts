@@ -83,6 +83,7 @@ const callback = async function (mutationsList, observer) {
             recordedIncrements.add(parentNode) // 将这个增量添加到已记录的集合中
           }
           //只要有这样输出,就执行下面的代码,清除节点主要是防止为了这个列表过大，浪费资源
+          //只要每天清除就行了，或者不清除，因为我现在发现用户离开网页之后会导致网页出现停止运行的情况，进一步导致计数错误
           // 清除旧的定时器（如果存在）
           if (nodeTimers.has(parentNode)) {
             clearTimeout(nodeTimers.get(parentNode))
@@ -101,7 +102,7 @@ const callback = async function (mutationsList, observer) {
             todayChat += '\n\n' // 换行
             console.log('todayChat已增加', todayChat)
             await chrome.storage.local.set({ todayChat })
-            recordedIncrements.delete(parentNode)
+            // recordedIncrements.delete(parentNode)
             nodeTimers.delete(parentNode)
           }, 10000) // 10秒后清除，但是如果在十秒内如果对同一节点有新的回答输出就无法识别
 

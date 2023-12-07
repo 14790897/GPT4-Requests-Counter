@@ -19,6 +19,10 @@
       <button class="p-2 bg-white rounded shadow mr-2" @click="exportHTML">Export as HTML</button>
       <button class="p-2 bg-white rounded shadow" @click="exportMarkdown">Export as Markdown</button>
     </div>
+    <!-- 生成今日报告 -->
+    <div>
+      <h2 class="text-lg bg-white p-4 rounded shadow mb-2 mt-4 justify-center items-center" @click="genTodayReport">Today Report</h2>
+    </div>
     <!-- 条件渲染 WordCloud 组件 -->
     <WordCloud v-if="showWordCloud" />
   </div>
@@ -101,6 +105,23 @@ const exportHTML = async () => {
   const blob = new Blob([todayChat], { type: 'text/html' });
 
   download(blob)
+}
+
+const genTodayReport = async () => {
+  let { todayChat } = await chrome.storage.local.get('todayChat')
+  if (!todayChat) {
+    todayChat = 'sorry, no chat';
+    console.log('todayChat导出失败：', todayChat)
+    return;
+  }
+  // 请求后端生成今日报告https://report.liuweiqing.top/
+  const res = await fetch('https://report.liuweiqing.top/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ todayChat })
+  })
 }
 
 const download = async (blob) => {
