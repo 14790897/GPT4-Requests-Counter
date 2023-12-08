@@ -24,8 +24,8 @@ export default defineManifest(async (env) => ({
   manifest_version: 3,
   // key: 'ekgmcbpgglflmgcfajnglpbcbdccnnje',
   content_security_policy: {
-    "extension_pages": "script-src 'self'; object-src 'self'",
-    "sandbox": "sandbox allow-scripts; script-src 'self'"
+    extension_pages: "script-src 'self'; object-src 'self'",
+    sandbox: "sandbox allow-scripts; script-src 'self'",
   },
   action: {
     default_popup: 'src/popup/index.html',
@@ -37,7 +37,12 @@ export default defineManifest(async (env) => ({
     {
       all_frames: false,
       js: ['src/content-script/index.ts'],
-      matches: ['*://chat.openai.com/*', '*://*.chat.openai.com/*'],
+      matches: [
+        '*://chat.openai.com/*',
+        '*://*.chat.openai.com/*',
+        '*://chat1.zhile.io/*',
+        '*://chat.zhile.io/*'
+      ],
       run_at: 'document_end',
     },
   ],

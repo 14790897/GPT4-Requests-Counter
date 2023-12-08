@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // content.js
 
 let lastOutput = '1111111111111111111111111111111111111111111111111111111111...'
@@ -281,3 +282,17 @@ chrome.storage.onChanged.addListener((changes) => {
 //     updateTextarea() // 调用函数以更新 textarea
 //   }
 // })
+=======
+import './index.scss'
+
+const src = chrome.runtime.getURL('src/content-script/iframe/index.html')
+
+const iframe = new DOMParser().parseFromString(
+  `<iframe class="crx-iframe" src="${src}"></iframe>`,
+  'text/html'
+).body.firstElementChild
+
+if (iframe) {
+  document.body?.append(iframe)
+}
+>>>>>>> upstream/master

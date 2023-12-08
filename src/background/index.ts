@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //我觉得可以在这里主动向popup和content script发送信息而不是被动地向他们发送，实际上这样也可以,因为这样的话，service worker可以停止工作
 //计时器主要在这里执行
 import {
@@ -95,3 +96,26 @@ function clearState() {
     }
   )
 }
+=======
+chrome.runtime.onInstalled.addListener(async (opt) => {
+  if (opt.reason === 'install') {
+    await chrome.storage.local.clear()
+
+    chrome.tabs.create({
+      active: true,
+      url: chrome.runtime.getURL('./installed.html'),
+    })
+  }
+
+  if (opt.reason === 'update') {
+    chrome.tabs.create({
+      active: true,
+      url: chrome.runtime.getURL('./src/update/index.html'),
+    })
+  }
+})
+
+console.log('hello world from background')
+
+export {}
+>>>>>>> upstream/master

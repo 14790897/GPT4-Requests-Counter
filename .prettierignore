@@ -2,4 +2,8 @@ auto-imports.d.ts
 components.d.ts
 pnpm-lock.yaml
 yarn.lock
+<<<<<<< HEAD
 node_modules/
+=======
+node_modules/
+>>>>>>> upstream/master
