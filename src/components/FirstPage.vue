@@ -3,15 +3,15 @@
     <h2 class="text-xl font-semibold mb-4">今日概览</h2>
     <div class="stats-grid">
       <div class="stat">
-        <h3 class="stat-title">用户活跃度</h3>
-        <p class="stat-value">123,456 次互动</p>
+        <h3 class="stat-title">活跃度</h3>
+        <p class="stat-value">{{ todayAllCount }} 次互动</p>
       </div>
       <div class="stat">
         <h3 class="stat-title">热门话题</h3>
         <ul class="list-disc list-inside">
-          <li>科技</li>
-          <li>教育</li>
-          <li>日常咨询</li>
+          <li v-for="(topic, index) in hotTopics" :key="index">
+            {{ topic.name }}
+          </li>
         </ul>
       </div>
       <div class="stat">
@@ -25,6 +25,29 @@
     </div>
   </div>
 </template>
+<script setup lang="ts">
+interface Topic {
+  name: string;
+  value: number;
+}
+const todayAllCount = ref(0);
+
+  // 定义 Props
+const props = defineProps({
+  words: {
+   type: Array,
+    default: () => {}
+  },
+  hotTopics: {
+    type: Array as PropType<Topic[]>,
+    default: () => []
+  }
+});
+
+chrome.storage.local.get('todayAllCount', (result) => {
+  todayAllCount.value = result.todayAllCount || 0;
+});
+</script>
 
 <style>
 .page-content {
