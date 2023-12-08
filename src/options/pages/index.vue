@@ -1,11 +1,18 @@
 <template>
-  <div class="m-4 p-4 bg-white rounded shadow-lg">
+  <div class="m-4 p-4 bg-white rounded-lg shadow-xl"> <!-- 增加了圆角大小和阴影效果 -->
     <div id="chart" ref="chartRef" class="w-full h-96 mb-4"></div>
-    <RouterLink to="/wordcloud">wordcloud    </RouterLink>
-    <RouterLink to="/about">about</RouterLink>
-    <RouterLink to="/dailyreport">dailyreport</RouterLink>
+    <!-- 增加了导航链接的样式和间距 -->
+    <nav class="flex justify-between text-lg mt-4">
+      <RouterLink to="/wordcloud" class="text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">
+        Word Cloud
+      </RouterLink>
+      <RouterLink to="/dailyreport" class="text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">
+        Daily Report
+      </RouterLink>
+    </nav>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import * as echarts from 'echarts';

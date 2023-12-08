@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div id="chart2" ref="chartContainer" class="w-full h-96 mb-4"></div>
+    <h1 class="flex justify-center">Today Word Cloud</h1>
+    <div class="flex justify-center items-center h-screen">
+      <div id="chart2" ref="chartContainer" class="w-full lg:w-3/4 xl:w-1/2 h-64 md:h-80 lg:h-96"></div>
+    </div>
   </div>
 </template>
 
@@ -15,15 +18,15 @@ const chartContainer = ref(null);
 
 // 使用 props 接收来自父组件的数据
 const props = defineProps({
-  response: Object
+  words: Object
 });
 
 const generateWordcloud = async () => {
   try {
     let words;
-    if (props.response) {
+    if (props.words) {
       // 检查 response 是否是字符串，如果是，解析为 JSON
-      words = typeof props.response === 'string' ? JSON.parse(props.response) : props.response;
+      words = typeof props.words === 'string' ? JSON.parse(props.words) : props.words;
     } else {
       let { todayChat } = await chrome.storage.local.get('todayChat');
       //之前放入数据的时候修改了格式
@@ -82,8 +85,8 @@ const generateWordcloud = async () => {
 
             left: 'center',
             top: 'center',
-            width: '70%',
-            height: '80%',
+            width: '100%',
+            height: '100%',
             right: null,
             bottom: null,
 

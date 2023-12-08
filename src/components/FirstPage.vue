@@ -14,10 +14,10 @@
           </li>
         </ul>
       </div>
-      <div class="stat">
+      <!-- <div class="stat">
         <h3 class="stat-title">用户反馈</h3>
         <p class="stat-value">85% 正面评价</p>
-      </div>
+      </div> -->
       <div class="stat">
         <h3 class="stat-title">高光互动</h3>
         <p class="stat-text">{{ todayParagraph }}</p>
@@ -39,10 +39,10 @@ const todayFirstChatTime = ref('sorry, no data');
 
 // 定义 Props
 const props = defineProps({
-  words: {
-    type: Array,
-    default: () => { }
-  },
+  // words: {
+  //   type: Array,
+  //   default: () => { }
+  // },
   hotTopics: {
     type: Array as PropType<Topic[]>,
     default: () => []

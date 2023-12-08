@@ -73,7 +73,7 @@ const openChart = () => {
 //使用echarts生成词云
 const generateWordcloud = async () => {
   // showWordCloud.value = true;  // 点击按钮时显示 WordCloud 组件
-   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/worldcloud' });
+   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/wordcloud' });
 }
 
 const formattedTime = computed(() => {

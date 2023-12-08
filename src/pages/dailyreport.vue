@@ -3,15 +3,15 @@
     <h1 class="text-3xl font-bold text-center mb-6">今日报告</h1>
 
     <div v-if="currentPage === 1">
-      <FirstPage :words="words" :hotTopics="hotTopics" :todayParagraph="todayParagraph" />
+      <FirstPage :hotTopics="hotTopics" :todayParagraph="todayParagraph" />
     </div>
+
+    <!-- <div v-if="currentPage === 2">
+      <SecondPage />
+    </div> -->
 
     <div v-if="currentPage === 2">
-      <SecondPage />
-    </div>
-
-    <div v-if="currentPage === 3">
-      <WordCloud />
+      <WordCloud :response="words"/>
     </div>
 
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @update:currentPage="updatePage" />
@@ -36,7 +36,7 @@ interface Topic {
 const hotTopics = ref<Topic[]>([]); 
 const todayParagraph = ref<string>('');
 const currentPage = ref(1);
-const totalPages = 3; // 总页数
+const totalPages = 2; // 总页数
 
 onMounted(() => {
   getWordData();
@@ -50,7 +50,7 @@ const getHotTopics = () => {
   hotTopics.value = words.value.keywords//keywords是键名
     .map((item: KeywordWithWeight) => ({ name: item[0], value: item[1] }))
     .sort((a, b) => b.value - a.value)
-    .slice(0, 3);
+    .slice(0, 6);
 };
 
 const getTodayParagraph = () => {
