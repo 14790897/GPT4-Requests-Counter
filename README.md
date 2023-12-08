@@ -26,8 +26,9 @@
 5. 点击today report查看今日报告
 
 ## 截图
+<img src="./images/popup.jpg" width="300" >
 
-![popup](./images/popup.jpg)
+<!-- ![popup](./images/popup.jpg) -->
 ![historyChart](./images/historyChart.jpg)
 ![todayReport](./images/todayReport.jpg)
 
