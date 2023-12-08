@@ -1,32 +1,39 @@
 <template>
   <div id="app" class="p-4 bg-gray-100 ">
-    <p class="text-lg bg-white p-4 rounded shadow mb-2">
-      Count: <span class="font-semibold">{{ count }}</span>
-    </p>
-    <p class="text-lg bg-white p-4 rounded shadow mb-2">
-      Today All Counts: <span class="font-semibold">{{ todayAllCount }}</span>
-    </p>
-    <p v-if="timeRemaining > 0" class="text-lg bg-white p-4 rounded shadow mb-2">
-      Time Remaining: <span class="font-semibold">{{ formattedTime }}</span>
-    </p>
-    <div class="flex justify-center items-center">
-      <button class="p-2 bg-white rounded shadow" @click="openChart">history chart</button>
-      <button class="p-2 bg-white rounded shadow" @click="generateWordcloud">today wordcloud</button>
-      <!-- <button class="p-2 bg-white rounded shadow" @click="generateWordcloud2">today wordcloud2
-    </button> -->
-    </div>
-    <div class="flex justify-center items-center mt-4">
-      <button class="p-2 bg-white rounded shadow mr-2" @click="exportHTML">Export as HTML</button>
-      <button class="p-2 bg-white rounded shadow" @click="exportMarkdown">Export as Markdown</button>
+    <div class="max-w-xl mx-auto">
+      <p class="text-lg text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
+        Count: <span class="font-semibold text-blue-600">{{ count }}</span>
+      </p>
+      <p class="text-lg text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
+        Today All Counts: <span class="font-semibold text-blue-600">{{ todayAllCount }}</span>
+      </p>
+      <p v-if="timeRemaining > 0" class="text-lg text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
+        Time Remaining: <span class="font-semibold text-blue-600">{{ formattedTime }}</span>
+      </p>
+      <div class="flex justify-center space-x-4 mb-4">
+        <button
+          class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-300"
+          @click="openChart">History Chart</button>
+        <button
+          class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600 transition duration-300"
+          @click="generateWordcloud">Today Wordcloud</button>
+      </div>
+      <div class="flex justify-center space-x-4">
+        <button
+          class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow hover:bg-purple-600 transition duration-300"
+          @click="exportHTML">Export as HTML</button>
+        <button
+          class="px-4 py-2 bg-pink-500 text-white font-semibold rounded-lg shadow hover:bg-pink-600 transition duration-300"
+        @click="exportMarkdown">Export as Markdown</button>
     </div>
     <!-- 生成今日报告 -->
-    <div>
-      <h2 class="text-lg bg-white p-4 rounded shadow mb-2 mt-4 justify-center items-center" @click="genTodayReport">Today Report</h2>
-    </div>
+    <h2
+      class="text-lg text-center text-gray-700 bg-white p-4 rounded-lg shadow mt-6 cursor-pointer hover:bg-gray-200 transition duration-300"
+      @click="genTodayReport">Today Report</h2>
     <!-- 条件渲染 WordCloud 组件 -->
-    <WordCloud v-if="showWordCloud" />
+    <!-- <WordCloud v-if="showWordCloud" /> -->
   </div>
-</template>
+</div></template>
 
 <script setup lang="ts">
 const count = ref(0);
@@ -67,7 +74,8 @@ onUnmounted(() => {
 
 // 打开图表页面
 const openChart = () => {
-  chrome.runtime.openOptionsPage()
+  // chrome.runtime.openOptionsPage()
+   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html')});
 };
 
 //使用echarts生成词云
@@ -93,7 +101,7 @@ const exportMarkdown = async () => {
   }
   // 创建一个 Blob 对象，其内容为 todayChat 字符串，类型为 text/markdown
   const blob = new Blob([todayChat], { type: 'text/markdown' });
-  download(blob)
+  download(blob, 'md')
 }
 const exportHTML = async () => {
   let { todayChat } = await chrome.storage.local.get('todayChat')
@@ -105,7 +113,7 @@ const exportHTML = async () => {
   // 创建一个 Blob 对象，其内容为 todayChat 字符串，类型为 text/html
   const blob = new Blob([todayChat], { type: 'text/html' });
 
-  download(blob)
+  download(blob, 'html')
 }
 
 const genTodayReport = async () => {
@@ -126,7 +134,7 @@ const genTodayReport = async () => {
   // })
 }
 
-const download = async (blob) => {
+const download = async (blob, fileType:string) => {
   // 创建一个用于下载的 URL
   const downloadUrl = window.URL.createObjectURL(blob);
 
@@ -134,7 +142,7 @@ const download = async (blob) => {
   const downloadLink = document.createElement('a');
   downloadLink.href = downloadUrl;
   const date = new Date().toString();
-  downloadLink.download = `chat-${date}.md`; // 设置下载的文件名
+  downloadLink.download = `chat-${date}.${fileType}`; // 设置下载的文件名
 
   // 将链接添加到 DOM 中（不可见），触发点击事件，然后移除
   document.body.appendChild(downloadLink);
@@ -143,17 +151,5 @@ const download = async (blob) => {
 
   // 清理创建的 URL
   window.URL.revokeObjectURL(downloadUrl);
-}
-
-const generateWordcloud2 = async () => {
-  const url = chrome.runtime.getURL('./wordcloud.html');
-  console.log('URL:', url);
-  chrome.tabs.create({ url: url }, (tab) => {
-    if (chrome.runtime.lastError) {
-      console.error(chrome.runtime.lastError);
-    } else {
-      console.log('Tab created:', tab);
-    }
-  });
 }
 </script>
