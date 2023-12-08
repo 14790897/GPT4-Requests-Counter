@@ -26,6 +26,4 @@ dist-ssr
 dist.zip
 venv
 min.html
-public/script.js
-public/wordcloud.html
 test/wordcloud.html
