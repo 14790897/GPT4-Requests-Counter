@@ -235,7 +235,7 @@ def extract_keywords(text):
     language = detect(text)  # 检测文本的语言
     print("language:", language)
     # if language == 'zh-cn' or language == 'zh-tw':  # 如果文本是中文
-    keywords = jieba.analyse.extract_tags(text, topK=10, withWeight=True, allowPOS=())
+    keywords = jieba.analyse.extract_tags(text, topK=20, withWeight=True, allowPOS=())
     # else:  # 如果文本是英文或其他语言
     #     vectorizer = TfidfVectorizer()
     #     tfidf_matrix = vectorizer.fit_transform([text])
@@ -247,10 +247,16 @@ def extract_keywords(text):
 
 
 # 使用函数
-# Main的时候运行下面代码
-if __name__ == '__main__':
-  keywords = extract_keywords(text)
-  print(keywords)
+# keywords = extract_keywords(text)
+# print(keywords)
+
+
+def find_paragraph(text, keyword):
+    paragraphs = text.split("\n")  # 假设段落由换行符分隔
+    for paragraph in paragraphs:
+        if keyword in paragraph:
+            return paragraph
+    return None
 
 
 def lambda_handler(event, context):
@@ -260,9 +266,10 @@ def lambda_handler(event, context):
         "Access-Control-Allow-Headers": "Content-Type",  # 允许的请求头
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",  # 允许的HTTP方法
     }
-    
+
     # 检查是否是OPTIONS请求，如果是，则直接返回允许CORS的头
-    if event['httpMethod'] == 'OPTIONS':
+    http_method = event.get("requestContext", {}).get("http", {}).get("method", "")
+    if http_method == "OPTIONS":
         return {
             "statusCode": 200,
             "headers": headers,
@@ -294,8 +301,19 @@ def lambda_handler(event, context):
 
     text = body["text"]
     keywords = extract_keywords(text)
+    # 找到权重最高的关键词
+    top_keyword = max(keywords, key=lambda x: x[1])[0] if keywords else None
+    # 如果找到了关键词，定位它所在的段落
+    if top_keyword:
+        paragraph = find_paragraph(text, top_keyword)
+    else:
+        top_keyword = None
+        paragraph = None
+
     return {
         "statusCode": 200,
         "headers": headers,
-        "body": json.dumps({"keywords": keywords}),
+        "body": json.dumps(
+            {"keywords": keywords, "top_keyword": top_keyword, "paragraph": paragraph}
+        ),
     }

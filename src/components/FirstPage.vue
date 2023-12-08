@@ -1,5 +1,5 @@
 <template>
-  <div  class="page-content">
+  <div class="page-content">
     <h2 class="text-xl font-semibold mb-4">今日概览</h2>
     <div class="stats-grid">
       <div class="stat">
@@ -19,8 +19,12 @@
         <p class="stat-value">85% 正面评价</p>
       </div>
       <div class="stat">
-        <h3 class="stat-title">互动示例</h3>
-        <p class="stat-text">“ChatGPT 帮助我解决了工作中的问题！”</p>
+        <h3 class="stat-title">高光互动</h3>
+        <p class="stat-text">{{ todayParagraph }}</p>
+      </div>
+      <div class="stat">
+        <h3 class="stat-title">今日首次对话时间</h3>
+        <p class="stat-value">{{ todayFirstChatTime }} </p>
       </div>
     </div>
   </div>
@@ -31,21 +35,29 @@ interface Topic {
   value: number;
 }
 const todayAllCount = ref(0);
+const todayFirstChatTime = ref('sorry, no data');
 
-  // 定义 Props
+// 定义 Props
 const props = defineProps({
   words: {
-   type: Array,
-    default: () => {}
+    type: Array,
+    default: () => { }
   },
   hotTopics: {
     type: Array as PropType<Topic[]>,
     default: () => []
+  },
+  todayParagraph: {
+    type: String,
+    default: ''
   }
 });
 
 chrome.storage.local.get('todayAllCount', (result) => {
   todayAllCount.value = result.todayAllCount || 0;
+});
+chrome.storage.local.get('todayFirstChatTime', (result) => {
+  todayFirstChatTime.value = result.todayFirstChatTime || 'sorry, no data';
 });
 </script>
 

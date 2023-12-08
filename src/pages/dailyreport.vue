@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold text-center mb-6">今日报告</h1>
 
     <div v-if="currentPage === 1">
-      <FirstPage :words="words" :hotTopics="hotTopics" />
+      <FirstPage :words="words" :hotTopics="hotTopics" :todayParagraph="todayParagraph" />
     </div>
 
     <div v-if="currentPage === 2">
@@ -24,15 +24,17 @@ import { ref } from 'vue';
 type KeywordWithWeight = [string, number];
 interface WordsData {
   keywords: KeywordWithWeight[];
+  paragraph: string
 }
 
-const words = ref<WordsData>({ keywords: [] }); 
+const words = ref<WordsData>({ keywords: [], paragraph: '' }); 
 interface Topic {
   name: string;
   value: number;
 }
 
 const hotTopics = ref<Topic[]>([]); 
+const todayParagraph = ref<string>('');
 const currentPage = ref(1);
 const totalPages = 3; // 总页数
 
@@ -45,10 +47,14 @@ function updatePage(page: number) {
 }
 
 const getHotTopics = () => {
-  hotTopics.value = words.value.keywords
+  hotTopics.value = words.value.keywords//keywords是键名
     .map((item: KeywordWithWeight) => ({ name: item[0], value: item[1] }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 3);
+};
+
+const getTodayParagraph = () => {
+  todayParagraph.value = words.value.paragraph
 };
 
 const getWordData = async () => {
@@ -75,7 +81,7 @@ const getWordData = async () => {
 
     words.value = await response.json();
     getHotTopics(); // 更新 hotTopics
-
+    getTodayParagraph(); // 更新 todayParagraph
   } catch (error) {
     console.error('Error: Failed to fetch word cloud data from the API', error);
   }

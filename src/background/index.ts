@@ -2,8 +2,7 @@
 //计时器主要在这里执行
 import {
   resetDailyCountAndUpdate,
-  startTimer,
-  getTimeRemaining,
+  startTimer,getTimeRemaining,
   updateCountsAndChartData,
 } from './utils.js'
 
@@ -71,6 +70,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         lastIncrementTime: 0,
         todayChat: '',
         dateAndCount: {},
+        todayFirstChatTime: 'sorry, no time'
       },
       function () {
         console.log('Default values set.')
