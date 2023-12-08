@@ -1,6 +1,8 @@
 <template>
   <div class="m-4 p-4 bg-white rounded shadow-lg">
     <div id="chart" ref="chartRef" class="w-full h-96 mb-4"></div>
+    <RouterLink to="/wordcloud">wordcloud    </RouterLink>
+    <RouterLink to="/about">about</RouterLink>
   </div>
 </template>
 
