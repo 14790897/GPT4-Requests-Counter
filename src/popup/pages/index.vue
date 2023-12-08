@@ -72,7 +72,8 @@ const openChart = () => {
 
 //使用echarts生成词云
 const generateWordcloud = async () => {
-  showWordCloud.value = true;  // 点击按钮时显示 WordCloud 组件
+  // showWordCloud.value = true;  // 点击按钮时显示 WordCloud 组件
+   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/worldcloud' });
 }
 
 const formattedTime = computed(() => {
@@ -108,20 +109,21 @@ const exportHTML = async () => {
 }
 
 const genTodayReport = async () => {
-  let { todayChat } = await chrome.storage.local.get('todayChat')
-  if (!todayChat) {
-    todayChat = 'sorry, no chat';
-    console.log('todayChat导出失败：', todayChat)
-    return;
-  }
-  // 请求后端生成今日报告https://report.liuweiqing.top/
-  const res = await fetch('https://report.liuweiqing.top/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ todayChat })
-  })
+  chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/dailyreport' });
+  // let { todayChat } = await chrome.storage.local.get('todayChat')
+  // if (!todayChat) {
+  //   todayChat = 'sorry, no chat';
+  //   console.log('todayChat导出失败：', todayChat)
+  //   return;
+  // }
+  // // 请求后端生成今日报告https://report.liuweiqing.top/
+  // const res = await fetch('https://report.liuweiqing.top/', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({ todayChat })
+  // })
 }
 
 const download = async (blob) => {

@@ -3,6 +3,7 @@
     <div id="chart" ref="chartRef" class="w-full h-96 mb-4"></div>
     <RouterLink to="/wordcloud">wordcloud    </RouterLink>
     <RouterLink to="/about">about</RouterLink>
+    <RouterLink to="/dailyreport">dailyreport</RouterLink>
   </div>
 </template>
 

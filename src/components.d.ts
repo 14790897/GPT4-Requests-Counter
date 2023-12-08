@@ -7,8 +7,11 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    FirstPage: typeof import('./components/FirstPage.vue')['default']
+    Pagination: typeof import('./components/Pagination.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SecondPage: typeof import('./components/SecondPage.vue')['default']
     WordCloud: typeof import('./components/WordCloud.vue')['default']
   }
 }

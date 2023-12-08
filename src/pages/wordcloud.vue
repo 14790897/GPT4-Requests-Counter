@@ -2,8 +2,7 @@
   <div>
     <!-- 创建一个新的div来显示收到的数据 -->
     <!-- <div>{{ responseContent }}</div> -->
-    <div>你好</div>
-    <h1>Extension About Page</h1>
+    <h1>Today Word Cloud</h1>
 
     <button @click="$router.back">Go Back</button>
     <div id="chart2" ref="chartContainer" class="w-full h-96 mb-4"></div>
