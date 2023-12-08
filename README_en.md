@@ -27,8 +27,9 @@ A Chrome extension designed to count the number of requests sent to GPT-4 each d
 5. Click the "today report" to view today's comprehensive report.
 
 ## Screenshots
+<img src="./images/popup.jpg" width="300" >
 
-![popup](./images/popup.jpg)
+<!-- ![popup](./images/popup.jpg) -->
 ![historyChart](./images/historyChart.jpg)
 ![todayReport](./images/todayReport.jpg)
 
