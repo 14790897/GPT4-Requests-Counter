@@ -2,7 +2,8 @@
 //计时器主要在这里执行
 import {
   resetDailyCountAndUpdate,
-  startTimer,getTimeRemaining,
+  startTimer,
+  getTimeRemaining,
   updateCountsAndChartData,
 } from './utils.js'
 
@@ -14,6 +15,11 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     //然后根据信息中的timerStarted判断是否开始计时，如果是的话，设置开始时间和持续时间
     if (message.timerStarted) {
       await startTimer(message.duration)
+      const currentDate = new Date().toDateString() // 获取当前日期(几号)字符串
+      //一天结束后会运行下面的函数
+      if (currentDate !== lastUpdatedDate) {
+        resetDailyCountAndUpdate(lastUpdatedDate, currentDate)
+      }
     } //如果是获取剩余时间的话，就执行下面的操作
     else if (message.request === 'getTimeRemaining') {
       const result = await chrome.storage.local.get([
@@ -34,11 +40,6 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       if (roundedTimeRemaining <= 0) {
         console.log('Timer expired. Updating counts and chart data.')
         await updateCountsAndChartData(lastUpdatedDate)
-        const currentDate = new Date().toDateString() // 获取当前日期(几号)字符串
-        //一天结束后会运行下面的函数
-        if (currentDate !== lastUpdatedDate) {
-          resetDailyCountAndUpdate(lastUpdatedDate, currentDate)
-        }
       }
       // console.log('Time remaining:', roundedTimeRemaining)
       sendResponse({ timeRemaining: roundedTimeRemaining })
@@ -70,7 +71,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         lastIncrementTime: 0,
         todayChat: '',
         dateAndCount: {},
-        todayFirstChatTime: 'sorry, no time'
+        todayFirstChatTime: 'sorry, no time',
       },
       function () {
         console.log('Default values set.')
