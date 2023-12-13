@@ -2,7 +2,6 @@
 
 export async function resetDailyCountAndUpdate(
   lastUpdatedDate: string,
-  currentDate: string
 ) {
   try {
     //如果是新的一天, 将昨日的键更新到同步存储中
@@ -12,7 +11,7 @@ export async function resetDailyCountAndUpdate(
       dateAndCount = {} // 初始化 dateAndCount 对象，如果它是 undefined
     }
     //如果是新的一天，刷新为新的一天的第一次聊天时间
-    todayFirstChatTime = Date.now().toDateString()
+    const todayFirstChatTime = new Date().toDateString()
     await chrome.storage.local.set({todayFirstChatTime})
  
     dateAndCount[lastUpdatedDate] = todayAllCount
@@ -22,7 +21,6 @@ export async function resetDailyCountAndUpdate(
     await chrome.storage.local.set({
       todayAllCount: 0,
       todayChat: '',
-      lastUpdatedDate: currentDate,
     })
   } catch (error) {
     console.error('Error in resetDailyCountAndUpdate:', error)
@@ -30,7 +28,7 @@ export async function resetDailyCountAndUpdate(
   }
 }
 
-export async function startTimer(duration: number) {
+export async function startTimer(duration: number, currentDate:string) {
   try {
     //目前应该只有这里也更新了时间，但是这里的时间应该是在上面的函数之后触发
     const startTime = Date.now()
@@ -38,7 +36,7 @@ export async function startTimer(duration: number) {
       startTime,
       duration,
       timerStarted: true,
-      lastUpdatedDate: new Date().toDateString(),
+      lastUpdatedDate: currentDate,
     })
   } catch (error) {
     console.error('Error in startTimer:', error)

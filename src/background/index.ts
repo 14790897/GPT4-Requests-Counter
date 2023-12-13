@@ -14,11 +14,11 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
     //然后根据信息中的timerStarted判断是否开始计时，如果是的话，设置开始时间和持续时间
     if (message.timerStarted) {
-      await startTimer(message.duration)
       const currentDate = new Date().toDateString() // 获取当前日期(几号)字符串
-      //一天结束后会运行下面的函数
+      await startTimer(message.duration, currentDate)
+      //一天结束后会运行下面的函数,上面的start timer会更新当前日期,然后我们下面传入的是旧的当前日期
       if (currentDate !== lastUpdatedDate) {
-        resetDailyCountAndUpdate(lastUpdatedDate, currentDate)
+        resetDailyCountAndUpdate(lastUpdatedDate)
       }
     } //如果是获取剩余时间的话，就执行下面的操作
     else if (message.request === 'getTimeRemaining') {
