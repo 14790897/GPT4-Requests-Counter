@@ -11,7 +11,16 @@ export async function resetDailyCountAndUpdate(
       dateAndCount = {} // 初始化 dateAndCount 对象，如果它是 undefined
     }
     //如果是新的一天，刷新为新的一天的第一次聊天时间
-    const todayFirstChatTime = new Date().toDateString()
+    const now = new Date()
+    const hours = now.getHours() // 获取小时
+    const minutes = now.getMinutes() // 获取分钟
+
+    // 格式化为 hh:mm 格式
+    const formattedTime =
+      hours.toString().padStart(2, '0') +
+      ':' +
+      minutes.toString().padStart(2, '0')
+    const todayFirstChatTime = formattedTime
     await chrome.storage.local.set({todayFirstChatTime})
  
     dateAndCount[lastUpdatedDate] = todayAllCount
