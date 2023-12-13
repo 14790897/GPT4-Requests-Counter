@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold text-center mb-6">今日报告</h1>
+    <h1 class="text-3xl font-bold text-center mb-6">Today Report</h1>
 
     <div v-if="currentPage === 1">
       <FirstPage :hotTopics="hotTopics" :todayParagraph="todayParagraph" />

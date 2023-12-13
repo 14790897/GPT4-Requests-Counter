@@ -2,11 +2,11 @@
   <div class="flex justify-center space-x-2 my-4">
     <button class="px-4 py-2 bg-blue-500 text-white rounded" :class="{ 'bg-gray-300': currentPage === 1 }"
       @click="changePage(currentPage - 1)" :disabled="currentPage === 1">
-      上一页
+      previous
     </button>
     <button class="px-4 py-2 bg-blue-500 text-white rounded" :class="{ 'bg-gray-300': currentPage === totalPages }"
       @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">
-      下一页
+      next
     </button>
   </div>
 </template>

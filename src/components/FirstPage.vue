@@ -1,29 +1,25 @@
 <template>
   <div class="page-content">
-    <h2 class="text-xl font-semibold mb-4">今日概览</h2>
+    <h2 class="text-xl font-semibold mb-4">Today's Overview</h2>
     <div class="stats-grid">
       <div class="stat">
-        <h3 class="stat-title">活跃度</h3>
-        <p class="stat-value">{{ todayAllCount }} 次互动</p>
+        <h3 class="stat-title">Activity Level</h3>
+        <p class="stat-value">{{ todayAllCount }} Interactions</p>
       </div>
       <div class="stat">
-        <h3 class="stat-title">热门话题</h3>
+        <h3 class="stat-title">Hot Topics</h3>
         <ul class="list-disc list-inside">
           <li v-for="(topic, index) in hotTopics" :key="index">
             {{ topic.name }}
           </li>
         </ul>
       </div>
-      <!-- <div class="stat">
-        <h3 class="stat-title">用户反馈</h3>
-        <p class="stat-value">85% 正面评价</p>
-      </div> -->
       <div class="stat">
-        <h3 class="stat-title">高光互动</h3>
+        <h3 class="stat-title">Highlight Interactions</h3>
         <p class="stat-text">{{ todayParagraph }}</p>
       </div>
       <div class="stat">
-        <h3 class="stat-title">今日首次对话时间</h3>
+        <h3 class="stat-title">First Conversation Time Today</h3>
         <p class="stat-value">{{ todayFirstChatTime }} </p>
       </div>
     </div>
