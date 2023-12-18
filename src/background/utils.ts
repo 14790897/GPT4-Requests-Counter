@@ -5,7 +5,7 @@ export async function resetDailyCountAndUpdate(
 ) {
   try {
     //如果是新的一天, 将昨日的键更新到同步存储中
-    const { todayAllCount } = await chrome.storage.local.get('todayAllCount')
+    const { todayAllCount } = await chrome.storage.sync.get('todayAllCount')
     let { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
     if (!dateAndCount) {
       dateAndCount = {} // 初始化 dateAndCount 对象，如果它是 undefined
@@ -21,13 +21,13 @@ export async function resetDailyCountAndUpdate(
       ':' +
       minutes.toString().padStart(2, '0')
     const todayFirstChatTime = formattedTime
-    await chrome.storage.local.set({todayFirstChatTime})
+    await chrome.storage.sync.set({todayFirstChatTime})
  
     dateAndCount[lastUpdatedDate] = todayAllCount
     await chrome.storage.sync.set({ dateAndCount })
 
     // 如果是新的一天，重置今日计数，清空todaychat
-    await chrome.storage.local.set({
+    await chrome.storage.sync.set({
       todayAllCount: 0,
       todayChat: '',
     })
@@ -41,7 +41,7 @@ export async function startTimer(duration: number, currentDate:string) {
   try {
     //目前应该只有这里也更新了时间，但是这里的时间应该是在上面的函数之后触发
     const startTime = Date.now()
-    await chrome.storage.local.set({
+    await chrome.storage.sync.set({
       startTime,
       duration,
       timerStarted: true,
@@ -69,12 +69,12 @@ export async function getTimeRemaining(startTime: number, duration: number) {
 
 export async function updateCountsAndChartData(lastUpdatedDate: string) {
   try {
-    const { todayAllCount, count } = await chrome.storage.local.get([
+    const { todayAllCount, count } = await chrome.storage.sync.get([
       'todayAllCount',
       'count',
     ])
     const newCount = Number(todayAllCount) + Number(count)
-    await chrome.storage.local.set({
+    await chrome.storage.sync.set({
       count: 0,
       timerStarted: false,
       todayAllCount: newCount,
