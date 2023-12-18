@@ -55,12 +55,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true // Indicate that response will be sent asynchronously
 })
 
-chrome.runtime.onInstalled.addListener(function (details) {
+chrome.runtime.onInstalled.addListener(async function (details) {
   // if (details.reason === 'update') {
   //   clearState()
   // }
   if (details.reason === 'install') {
-    chrome.storage.local.set(
+    await chrome.storage.sync.set(
       {
         count: 0,
         timerStarted: false,
@@ -69,14 +69,12 @@ chrome.runtime.onInstalled.addListener(function (details) {
         todayAllCount: 0,
         lastUpdatedDate: new Date().toDateString(),
         lastIncrementTime: 0,
-        todayChat: '',
         dateAndCount: {},
         todayFirstChatTime: 'sorry, no time',
-      },
-      function () {
-        console.log('Default values set.')
       }
     )
+    await chrome.storage.local.set({ todayChat: '' }),
+    console.log('Default values set.')
   }
 })
 
