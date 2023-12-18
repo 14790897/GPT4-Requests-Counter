@@ -63,6 +63,7 @@ export async function getTimeRemaining(startTime: number, duration: number) {
   } catch (error) {
     console.error('Error in getTimeRemaining:', error)
     console.error('Stack trace:', error.stack)
+    return 0
   }
 }
 
@@ -79,10 +80,7 @@ export async function updateCountsAndChartData(lastUpdatedDate: string) {
       todayAllCount: newCount,
     })
 
-    let { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
-    if (!dateAndCount) {
-      dateAndCount = {} // 初始化 dateAndCount 对象，如果它是 undefined
-    }
+    const { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
     dateAndCount[lastUpdatedDate] = newCount
     await chrome.storage.sync.set({ dateAndCount })
   } catch (error) {
