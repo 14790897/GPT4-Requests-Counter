@@ -49,10 +49,10 @@ const props = defineProps({
   }
 });
 
-chrome.storage.local.get('todayAllCount', (result) => {
+chrome.storage.sync.get('todayAllCount', (result) => {
   todayAllCount.value = result.todayAllCount || 0;
 });
-chrome.storage.local.get('todayFirstChatTime', (result) => {
+chrome.storage.sync.get('todayFirstChatTime', (result) => {
   todayFirstChatTime.value = result.todayFirstChatTime || 'sorry, no data';
 });
 </script>
