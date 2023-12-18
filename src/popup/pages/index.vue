@@ -45,11 +45,11 @@ const showWordCloud = ref(false);  // 定义一个新的响应式属性
 
 // 在组件挂载后设置 Chrome 运行时消息监听器
 onMounted(() => {
-  chrome.storage.local.get('count', (result) => {
+  chrome.storage.sync.get('count', (result) => {
     count.value = result.count || 0;
   });
 
-  chrome.storage.local.get('todayAllCount', (result) => {
+  chrome.storage.sync.get('todayAllCount', (result) => {
     todayAllCount.value = result.todayAllCount || 0;
   });
 
@@ -118,20 +118,6 @@ const exportHTML = async () => {
 
 const genTodayReport = async () => {
   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/dailyreport' });
-  // let { todayChat } = await chrome.storage.local.get('todayChat')
-  // if (!todayChat) {
-  //   todayChat = 'sorry, no chat';
-  //   console.log('todayChat导出失败：', todayChat)
-  //   return;
-  // }
-  // // 请求后端生成今日报告https://report.liuweiqing.top/
-  // const res = await fetch('https://report.liuweiqing.top/', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   },
-  //   body: JSON.stringify({ todayChat })
-  // })
 }
 
 const download = async (blob, fileType:string) => {

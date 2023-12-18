@@ -43,34 +43,34 @@ const callback = async function (mutationsList, observer) {
 
         const now = Date.now()
         let { lastIncrementTime } =
-          await chrome.storage.local.get('lastIncrementTime') // 用于存储上一次增量输出的时间
+          await chrome.storage.sync.get('lastIncrementTime') // 用于存储上一次增量输出的时间
         if (increment && now - lastIncrementTime >= 300) {
           //只有间隔0.3秒钟以上才能再增加
           lastIncrementTime = now // 更新上次增加的时间
-          await chrome.storage.local.set({ lastIncrementTime })
+          await chrome.storage.sync.set({ lastIncrementTime })
 
           if (!recordedIncrements.has(parentNode)) {
             console.log('已经进入count增加')
             // 如果有增量输出，并且这个增量是新的
             try {
-              const result = await chrome.storage.local.get('count')
+              const result = await chrome.storage.sync.get('count')
               let count = result.count || 0
               count++
               // recordedIncrements = new set()
               // 如果这是第一次计时，开始计时
               const { timerStarted } =
-                await chrome.storage.local.get('timerStarted')
+                await chrome.storage.sync.get('timerStarted')
               if (!timerStarted) {
-                // await chrome.storage.local.set({ timerStarted: true })
+                // await chrome.storage.sync.set({ timerStarted: true })
                 chrome.runtime.sendMessage({
                   timerStarted: true,
                   duration: 3 * 60 * 60 * 1000,
                 }) // 发送倒计时开始的消息，同时在背景脚本中记录当前的时间，这个应该在count设置之前执行
               }
               console.log('count====================================', count)
-              await chrome.storage.local.set({ count })
+              await chrome.storage.sync.set({ count })
 
-              const { countOutput } = await chrome.storage.local.get('count')
+              const { countOutput } = await chrome.storage.sync.get('count')
               console.log(
                 'countOutput====================================',
                 countOutput
@@ -173,7 +173,7 @@ async function updateTextareaAndTime() {
 
   let count: number
   try {
-    const result = await chrome.storage.local.get('count')
+    const result = await chrome.storage.sync.get('count')
     count = result.count || 0
   } catch (error) {
     console.error('Failed to get count from storage:', error)
@@ -219,7 +219,7 @@ chrome.storage.onChanged.addListener((changes) => {
 // const startTimer = () => {
 //   timer = setTimeout(
 //     () => {
-//       chrome.storage.local.set({ count: 0, timerStarted: false })
+//       chrome.storage.sync.set({ count: 0, timerStarted: false })
 //       timer = null
 //     },
 //     3 * 60 * 60 * 1000
@@ -233,7 +233,7 @@ chrome.storage.onChanged.addListener((changes) => {
 //   if (textarea) {
 //     try {
 //       // 获取存储的计数
-//       const result = await chrome.storage.local.get('count')
+//       const result = await chrome.storage.sync.get('count')
 //       const count = result.count || 0
 //       // 假设 timeRemaining 是在这个作用域内可用的
 //       // 更新 textarea 的 placeholder

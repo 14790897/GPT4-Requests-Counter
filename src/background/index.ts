@@ -10,7 +10,7 @@ import {
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   try {
     const { lastUpdatedDate } =
-      await chrome.storage.local.get('lastUpdatedDate')
+      await chrome.storage.sync.get('lastUpdatedDate')
 
     //然后根据信息中的timerStarted判断是否开始计时，如果是的话，设置开始时间和持续时间
     if (message.timerStarted) {
@@ -22,7 +22,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       }
     } //如果是获取剩余时间的话，就执行下面的操作
     else if (message.request === 'getTimeRemaining') {
-      const result = await chrome.storage.local.get([
+      const result = await chrome.storage.sync.get([
         'timerStarted',
         'startTime',
         'duration',
@@ -80,7 +80,7 @@ chrome.runtime.onInstalled.addListener(async function (details) {
 
 function clearState() {
   // Clear count, timer status, startTime, and duration
-  chrome.storage.local.set(
+  chrome.storage.sync.set(
     {
       count: 0,
       timerStarted: false,
