@@ -80,7 +80,7 @@ const callback = async function (mutationsList, observer) {
             }
             recordedIncrements.add(parentNode) // 将这个增量添加到已记录的集合中
           }
-          //nodeTimers，recordedIncrements只要每天清除就行了，或者不清除，因为我现在发现用户离开网页之后会导致网页出现停止运行的情况，进一步导致计数错误
+          //nodeTimers，recordedIncrements只要每天清除就行了，或者不清除，因为我现在发现用户离开网页之后会导致网页出现停止运行的情况，这样这些节点可能突然清除了而计数又会重新触发，进一步导致计数错误
           // 清除旧的定时器（如果存在）
           if (nodeTimers.has(parentNode)) {
             clearTimeout(nodeTimers.get(parentNode))
