@@ -5,7 +5,6 @@ let lastOutput = '1111111111111111111111111111111111111111111111111111111111...'
 const recordedIncrements = new Set() // 用于存储已经记录过的增量输出
 const nodeTimers = new Map() // 用于存储每个节点的定时器
 let isLocked = false // 锁标志
-let { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
 
 class MessageLimiter {
   private limit: number
@@ -227,14 +226,16 @@ observer.observe(document.body, config)
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.interfaceStyle) {
     if (message.interfaceStyle == 'precise') {
-      interfaceStyle = 'precise'
+      const interfaceStyle = 'precise'
+      updateTextareaAndTime(interfaceStyle)
     } else {
-      interfaceStyle = 'simple'
+      const interfaceStyle = 'simple'
+      updateTextareaAndTime(interfaceStyle)
     }
   }
 })
 
-async function updateTextareaAndTime() {
+async function updateTextareaAndTime(interfaceStyle:string) {
   const textarea = getTextArea()
   if (!textarea) return
 
@@ -301,16 +302,18 @@ function formatTime(timeInSeconds: number) {
   return `${hours} hours ${minutes} minutes`
 }
 
+const { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
+
 // 立即更新一次数据
-updateTextareaAndTime()
+updateTextareaAndTime(interfaceStyle)
 
 // 每隔1秒更新一次数据
-setInterval(updateTextareaAndTime, 1000)
+setInterval(updateTextareaAndTime(interfaceStyle), 1000)
 
 // 监听计数的变化（考虑到有多个网页的关系，所以说这里是要监听存储变化）
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.count) {
-    updateTextareaAndTime()
+    updateTextareaAndTime(interfaceStyle)
     console.log('count变化了   in chrome.storage.onChanged.addListener')
   }
 })

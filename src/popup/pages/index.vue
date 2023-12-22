@@ -46,7 +46,7 @@
 <script setup lang="ts">
 const count = ref(0);
 const todayAllCount = ref(0);
-const timeRemaining = ref(0);
+// const timeRemaining = ref(0);
 let timer: number;
 const applyNewStyle = ref(true);
 const label = ref("Apply New Style");
@@ -78,7 +78,7 @@ onMounted(() => {
 //       clearInterval(timer);  // 如果时间到了，清除定时器
 //     }
 //   }, 1000);
-// });
+});
 
 //watch监听interfaceStyle的变化
 watch(applyNewStyle, (newVal) => {
