@@ -5,6 +5,51 @@ const recordedIncrements = new Set() // 用于存储已经记录过的增量输�
 const nodeTimers = new Map() // 用于存储每个节点的定时器
 let isLocked = false // 锁标志
 
+class MessageLimiter {
+  private limit: number
+  private windowSize: number
+  private timestamps: number[]
+
+  constructor(limit: number, windowSize: number) {
+    this.limit = limit // 消息数量限制，比如 40
+    this.windowSize = windowSize // 时间窗口大小，以毫秒为单位，比如三小时
+    this.timestamps = [] // 用于存储消息的时间戳
+  }
+
+  trySendMessage(): boolean {
+    const now = Date.now()
+    this.cleanOldTimestamps(now)
+
+    // 检查消息数量是否超过限制
+    if (this.timestamps.length < this.limit) {
+      this.timestamps.push(now) // 添加新的时间戳
+      console.log('消息发送成功')
+      return true
+    } else {
+      console.log('消息发送失败：超过了限制')
+      return false
+    }
+  }
+
+  getCurrentMessageCount(): number {
+    const now = Date.now()
+    this.cleanOldTimestamps(now)
+    return this.timestamps.length
+  }
+
+  private cleanOldTimestamps(currentTime: number) {
+    const windowStart = currentTime - this.windowSize
+    while (this.timestamps.length > 0 && this.timestamps[0] < windowStart) {
+      this.timestamps.shift()
+    }
+  }
+}
+
+// 使用方法
+const limit: number = 40 // 三小时内最多40条消息
+const threeHours: number = 3 * 60 * 60 * 1000 // 三小时的毫秒数
+const messageLimiter = new MessageLimiter(limit, threeHours)
+
 const callback = async function (mutationsList, observer) {
   // 检查锁是否已经被设置
   if (isLocked) {
@@ -48,7 +93,6 @@ const callback = async function (mutationsList, observer) {
           await chrome.storage.sync.set({ lastIncrementTime })
 
           if (!recordedIncrements.has(parentNode)) {
-            console.log('已经进入count增加')
             // 如果有增量输出，并且这个增量是新的
             try {
               const result = await chrome.storage.sync.get('count')
@@ -67,7 +111,8 @@ const callback = async function (mutationsList, observer) {
               }
               console.log('count====================================', count)
               await chrome.storage.sync.set({ count })
-
+              //这个是用于正确的计时方式
+              messageLimiter.trySendMessage()
               const { countOutput } = await chrome.storage.sync.get('count')
               console.log(
                 'countOutput====================================',
@@ -153,7 +198,6 @@ function throttle(func, limit) {
   }
 }
 
-
 // 使用防抖的 MutationObserver 回调
 const debouncedCallback = throttle(callback, 2000) // 2秒内的变化只会触发一次
 
@@ -163,33 +207,63 @@ const config = { subtree: true, characterData: true }
 observer.observe(document.body, config)
 
 async function updateTextareaAndTime() {
-  const textarea = document.getElementById('prompt-textarea')
-  if (!textarea) {
-    console.log('textarea not found.')
-    return
-  }
+  const textarea = getTextArea()
+  if (!textarea) return
 
-  let count: number
+  try {
+    const { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
+    if (interfaceStyle == 'precise') {
+      const count = messageLimiter.getCurrentMessageCount()
+      // Provide different messages based on the message count
+      let message = ''
+      if (count < 10) {
+        message =
+          'Keep it up! You need to be more active during this period. Try to send more messages!'
+      } else if (count >= 10 && count < 30) {
+        message = 'Good job! You are quite active. Keep it going!'
+      } else if (count >= 30) {
+        message =
+          "Congratulations! You have been working very hard, you're almost at the limit!"
+      }
+
+      // Update the placeholder of the textarea
+      textarea.placeholder = `Count: ${count}. ${message}`
+    } else {
+      const count = await getCountFromStorage()
+      const timeRemaining = await getTimeRemaining()
+      const formattedTime = formatTime(timeRemaining)
+      textarea.placeholder = `Count: ${count}   Time Remaining: ${formattedTime}`
+    }
+  } catch (error) {
+    console.error('Failed to update textarea:', error)
+  }
+}
+
+function getTextArea(): HTMLTextAreaElement | null {
+  return document.getElementById('prompt-textarea') as HTMLTextAreaElement
+}
+
+async function getCountFromStorage(): Promise<number> {
   try {
     const result = await chrome.storage.sync.get('count')
-    count = result.count || 0
+    return result.count || 0
   } catch (error) {
     console.error('Failed to get count from storage:', error)
+    return 0
   }
+}
 
-  try {
+function getTimeRemaining(): Promise<number> {
+  return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
       if (chrome.runtime.lastError) {
         console.error('Failed to get time remaining:', chrome.runtime.lastError)
+        reject(chrome.runtime.lastError)
         return
       }
-      const timeRemaining = response.timeRemaining || 0
-      const formattedTime = formatTime(timeRemaining)
-      textarea.placeholder = `Count: ${count}   Time Remaining: ${formattedTime}`
+      resolve(response.timeRemaining || 0)
     })
-  } catch (error) {
-    console.error('Failed to get time remaining:', error)
-  }
+  })
 }
 
 function formatTime(timeInSeconds: number) {
@@ -205,7 +279,7 @@ updateTextareaAndTime()
 // 每隔1秒更新一次数据
 setInterval(updateTextareaAndTime, 1000)
 
-// 监听计数的变化
+// 监听计数的变化（考虑到有多个网页的关系，所以说这里是要监听存储变化）
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.count) {
     updateTextareaAndTime()
