@@ -5,7 +5,7 @@ let lastOutput = '1111111111111111111111111111111111111111111111111111111111...'
 const recordedIncrements = new Set() // 用于存储已经记录过的增量输出
 const nodeTimers = new Map() // 用于存储每个节点的定时器
 let isLocked = false // 锁标志
-const { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
+let { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
 
 class MessageLimiter {
   private limit: number
@@ -48,10 +48,17 @@ class MessageLimiter {
 
   private async cleanOldTimestamps(currentTime: number) {
     const windowStart = currentTime - this.windowSize
+    let isChanged = false
+
     while (this.timestamps.length > 0 && this.timestamps[0] < windowStart) {
       this.timestamps.shift()
+      isChanged = true
     }
-    await chrome.storage.local.set({ count: this.timestamps.length })
+
+    // 如果发生了更改，更新存储
+    if (isChanged) {
+      await chrome.storage.local.set({ timestamps: this.timestamps })
+    }
   }
 }
 
@@ -215,6 +222,17 @@ const observer = new MutationObserver(debouncedCallback)
 
 const config = { subtree: true, characterData: true }
 observer.observe(document.body, config)
+
+
+// 更新输入栏的样式的代码
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.interfaceStyle) {
+        if (message.interfaceStyle == 'precise') {
+          interfaceStyle = 'precise'
+        }
+      }
+    }
+)
 
 async function updateTextareaAndTime() {
   const textarea = getTextArea()

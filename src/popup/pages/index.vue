@@ -91,12 +91,14 @@ onMounted(() => {
 //watch监听interfaceStyle的变化
 watch(applyNewStyle, (newVal) => {
   if(newVal) {
-    label.value = "Please refresh the page to apply new styles.";
+    // label.value = "Please refresh the page to apply new styles.";
     chrome.storage.sync.set({ interfaceStyle:  'precise'});
   } else {
-    label.value = "Apply New Style";
+    // label.value = "Apply New Style";
     chrome.storage.sync.set({ interfaceStyle:  'normal'});
   }
+  chrome.runtime.sendMessage({
+    interfaceStyle: 'precise'});
 });
 
 // 在组件卸载时清除定时器
