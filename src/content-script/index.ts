@@ -30,8 +30,7 @@ const callback = async function (mutationsList, observer) {
         }
         parentNode = parentNode.parentNode
       }
-      // //睡眠等待一秒钟
-      // await new Promise((resolve) => setTimeout(resolve, 1000))
+      //这里是不是少了如果上面循环没找到应该直接退出的
       if (parentNode) {
         let increment
         const currentOutput = parentNode.textContent // 获取当前文本节点内的所有文本
@@ -40,7 +39,6 @@ const callback = async function (mutationsList, observer) {
         } //这里可不能随便在else的时候加break,一旦break之后整个循环都会停止,不会检测到新的变化
         lastOutput = currentOutput // 更新上一次的输出
         // console.log('增量输出：', increment)
-
         const now = Date.now()
         let { lastIncrementTime } =
           await chrome.storage.sync.get('lastIncrementTime') // 用于存储上一次增量输出的时间
@@ -82,8 +80,7 @@ const callback = async function (mutationsList, observer) {
             }
             recordedIncrements.add(parentNode) // 将这个增量添加到已记录的集合中
           }
-          //只要有这样输出,就执行下面的代码,清除节点主要是防止为了这个列表过大，浪费资源
-          //只要每天清除就行了，或者不清除，因为我现在发现用户离开网页之后会导致网页出现停止运行的情况，进一步导致计数错误
+          //nodeTimers，recordedIncrements只要每天清除就行了，或者不清除，因为我现在发现用户离开网页之后会导致网页出现停止运行的情况，进一步导致计数错误
           // 清除旧的定时器（如果存在）
           if (nodeTimers.has(parentNode)) {
             clearTimeout(nodeTimers.get(parentNode))
@@ -100,11 +97,12 @@ const callback = async function (mutationsList, observer) {
               ''
             )}`
             todayChat += '\n\n' // 换行
-            console.log('todayChat已增加', todayChat)
+            // console.log('todayChat已增加', todayChat)
             await chrome.storage.local.set({ todayChat })
             // recordedIncrements.delete(parentNode)
-            nodeTimers.delete(parentNode)
-          }, 10000) // 10秒后清除，但是如果在十秒内如果对同一节点有新的回答输出就无法识别
+            //下面的我也先注释了
+            // nodeTimers.delete(parentNode)
+          }, 10000) // 10秒后将todayChat的内容更新
 
           // 存储新的定时器,用于再次循环的时候遇到同样的节点可以清除计时，这是为了在对话全部输出之后才删除节点
           nodeTimers.set(parentNode, timer)
