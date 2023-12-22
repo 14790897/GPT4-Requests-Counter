@@ -18,30 +18,46 @@
           class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600 transition duration-300"
           @click="generateWordcloud">Today Wordcloud</button>
       </div>
+
+      <div class="flex justify-center mb-4">
+      <label class="flex items-center space-x-3">
+        <input type="checkbox" v-model="applyNewStyle" @change="updateLabel">
+        <span>{{ label }}</span>
+      </label>
+    </div>
       <div class="flex justify-center space-x-4">
-        <button
-          class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow hover:bg-purple-600 transition duration-300"
-          @click="exportHTML">Export as HTML</button>
+        <!-- <button
+            class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow hover:bg-purple-600 transition duration-300"
+            @click="exportHTML">Export as HTML</button> -->
         <button
           class="px-4 py-2 bg-pink-500 text-white font-semibold rounded-lg shadow hover:bg-pink-600 transition duration-300"
-        @click="exportMarkdown">Export as Markdown</button>
+          @click="exportMarkdown">Export as Markdown</button>
+      </div>
+      <!-- 生成今日报告 -->
+      <h2
+        class="text-lg text-center text-gray-700 bg-white p-4 rounded-lg shadow mt-6 cursor-pointer hover:bg-gray-200 transition duration-300"
+        @click="genTodayReport">Today Report</h2>
+      <!-- 条件渲染 WordCloud 组件 -->
+      <!-- <WordCloud v-if="showWordCloud" /> -->
     </div>
-    <!-- 生成今日报告 -->
-    <h2
-      class="text-lg text-center text-gray-700 bg-white p-4 rounded-lg shadow mt-6 cursor-pointer hover:bg-gray-200 transition duration-300"
-      @click="genTodayReport">Today Report</h2>
-    <!-- 条件渲染 WordCloud 组件 -->
-    <!-- <WordCloud v-if="showWordCloud" /> -->
   </div>
-</div></template>
+</template>
 
 <script setup lang="ts">
 const count = ref(0);
 const todayAllCount = ref(0);
 const timeRemaining = ref(0);
 let timer: number;
-const showWordCloud = ref(false);  // 定义一个新的响应式属性
+const applyNewStyle = ref(true);
+const label = ref("Apply New Style");
 
+const updateLabel = () => {
+  if (applyNewStyle.value) {
+    label.value = "Please refresh the page to apply new styles.";
+  } else {
+    label.value = "Apply New Style";
+  }
+};
 
 // 在组件挂载后设置 Chrome 运行时消息监听器
 onMounted(() => {
@@ -53,6 +69,11 @@ onMounted(() => {
     todayAllCount.value = result.todayAllCount || 0;
   });
 
+  chrome.storage.sync.get('interfaceStyle', (result) => {
+    if(result.interfaceStyle) {
+      applyNewStyle.value = result.interfaceStyle == 'precise';
+    }
+  });
   chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
     timeRemaining.value = response.timeRemaining;
   });
@@ -67,6 +88,17 @@ onMounted(() => {
   }, 1000);
 });
 
+//watch监听interfaceStyle的变化
+watch(applyNewStyle, (newVal) => {
+  if(newVal) {
+    label.value = "Please refresh the page to apply new styles.";
+    chrome.storage.sync.set({ interfaceStyle:  'precise'});
+  } else {
+    label.value = "Apply New Style";
+    chrome.storage.sync.set({ interfaceStyle:  'normal'});
+  }
+});
+
 // 在组件卸载时清除定时器
 onUnmounted(() => {
   clearInterval(timer);
@@ -75,13 +107,13 @@ onUnmounted(() => {
 // 打开图表页面
 const openChart = () => {
   // chrome.runtime.openOptionsPage()
-   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html')});
+  chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') });
 };
 
 //使用echarts生成词云
 const generateWordcloud = async () => {
   // showWordCloud.value = true;  // 点击按钮时显示 WordCloud 组件
-   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/wordcloud' });
+  chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/wordcloud' });
 }
 
 const formattedTime = computed(() => {
@@ -120,7 +152,7 @@ const genTodayReport = async () => {
   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/dailyreport' });
 }
 
-const download = async (blob, fileType:string) => {
+const download = async (blob, fileType: string) => {
   // 创建一个用于下载的 URL
   const downloadUrl = window.URL.createObjectURL(blob);
 

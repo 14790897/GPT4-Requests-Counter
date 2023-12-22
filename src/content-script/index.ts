@@ -1,9 +1,11 @@
 // content.js
+export {}
 
 let lastOutput = '1111111111111111111111111111111111111111111111111111111111...'
 const recordedIncrements = new Set() // 用于存储已经记录过的增量输出
 const nodeTimers = new Map() // 用于存储每个节点的定时器
 let isLocked = false // 锁标志
+const { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
 
 class MessageLimiter {
   private limit: number
@@ -11,18 +13,24 @@ class MessageLimiter {
   private timestamps: number[]
 
   constructor(limit: number, windowSize: number) {
-    this.limit = limit // 消息数量限制，比如 40
-    this.windowSize = windowSize // 时间窗口大小，以毫秒为单位，比如三小时
-    this.timestamps = [] // 用于存储消息的时间戳
+    this.limit = limit
+    this.windowSize = windowSize
+    this.timestamps = []
   }
 
-  trySendMessage(): boolean {
+  async loadTimestamps(): Promise<void> {
+    const data = await chrome.storage.local.get(['timestamps'])
+    this.timestamps = data.timestamps || []
+  }
+
+  async trySendMessage(): Promise<boolean> {
     const now = Date.now()
+    await this.loadTimestamps()
     this.cleanOldTimestamps(now)
 
-    // 检查消息数量是否超过限制
     if (this.timestamps.length < this.limit) {
-      this.timestamps.push(now) // 添加新的时间戳
+      this.timestamps.push(now)
+      await chrome.storage.local.set({ timestamps: this.timestamps })
       console.log('消息发送成功')
       return true
     } else {
@@ -31,17 +39,19 @@ class MessageLimiter {
     }
   }
 
-  getCurrentMessageCount(): number {
+  async getCurrentMessageCount(): Promise<number> {
     const now = Date.now()
+    await this.loadTimestamps()
     this.cleanOldTimestamps(now)
     return this.timestamps.length
   }
 
-  private cleanOldTimestamps(currentTime: number) {
+  private async cleanOldTimestamps(currentTime: number) {
     const windowStart = currentTime - this.windowSize
     while (this.timestamps.length > 0 && this.timestamps[0] < windowStart) {
       this.timestamps.shift()
     }
+    await chrome.storage.local.set({ count: this.timestamps.length })
   }
 }
 
@@ -211,9 +221,9 @@ async function updateTextareaAndTime() {
   if (!textarea) return
 
   try {
-    const { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
+    console.log('interfaceStyle', interfaceStyle)
     if (interfaceStyle == 'precise') {
-      const count = messageLimiter.getCurrentMessageCount()
+      const count = await messageLimiter.getCurrentMessageCount()
       // Provide different messages based on the message count
       let message = ''
       if (count < 10) {

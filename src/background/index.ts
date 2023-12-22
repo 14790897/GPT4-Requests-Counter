@@ -60,19 +60,19 @@ chrome.runtime.onInstalled.addListener(async function (details) {
   //   clearState()
   // }
   if (details.reason === 'install') {
-    await chrome.storage.sync.set(
-      {
-        count: 0,
-        timerStarted: false,
-        startTime: 0,
-        duration: 0,
-        todayAllCount: 0,
-        lastUpdatedDate: new Date().toDateString(),
-        lastIncrementTime: 0,
-        dateAndCount: {},
-        todayFirstChatTime: 'sorry, no time',
-      }
-    )
+    await chrome.storage.sync.set({
+      count: 0,
+      timerStarted: false,
+      startTime: 0,
+      duration: 0,
+      todayAllCount: 0,
+      lastUpdatedDate: new Date().toDateString(),
+      lastIncrementTime: 0,
+      dateAndCount: {},
+      todayFirstChatTime: 'sorry, no time',
+      interfaceStyle: 'precise',
+      timestamps: [],
+    })
     await chrome.storage.local.set({ todayChat: '' }),
     console.log('Default values set.')
   }
