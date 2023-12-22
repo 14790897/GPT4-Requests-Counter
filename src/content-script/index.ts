@@ -223,16 +223,16 @@ const observer = new MutationObserver(debouncedCallback)
 const config = { subtree: true, characterData: true }
 observer.observe(document.body, config)
 
-
 // 更新输入栏的样式的代码
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      if (message.interfaceStyle) {
-        if (message.interfaceStyle == 'precise') {
-          interfaceStyle = 'precise'
-        }
-      }
+  if (message.interfaceStyle) {
+    if (message.interfaceStyle == 'precise') {
+      interfaceStyle = 'precise'
+    } else {
+      interfaceStyle = 'simple'
     }
-)
+  }
+})
 
 async function updateTextareaAndTime() {
   const textarea = getTextArea()

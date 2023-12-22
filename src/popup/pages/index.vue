@@ -7,9 +7,9 @@
       <p class="text-lg text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
         Today All Counts: <span class="font-semibold text-blue-600">{{ todayAllCount }}</span>
       </p>
-      <p v-if="timeRemaining > 0" class="text-lg text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
+      <!-- <p v-if="timeRemaining > 0" class="text-lg text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
         Time Remaining: <span class="font-semibold text-blue-600">{{ formattedTime }}</span>
-      </p>
+      </p> -->
       <div class="flex justify-center space-x-4 mb-4">
         <button
           class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-300"
@@ -21,7 +21,7 @@
 
       <div class="flex justify-center mb-4">
       <label class="flex items-center space-x-3">
-        <input type="checkbox" v-model="applyNewStyle" @change="updateLabel">
+        <input type="checkbox" v-model="applyNewStyle">
         <span>{{ label }}</span>
       </label>
     </div>
@@ -51,14 +51,6 @@ let timer: number;
 const applyNewStyle = ref(true);
 const label = ref("Apply New Style");
 
-const updateLabel = () => {
-  if (applyNewStyle.value) {
-    label.value = "Please refresh the page to apply new styles.";
-  } else {
-    label.value = "Apply New Style";
-  }
-};
-
 // 在组件挂载后设置 Chrome 运行时消息监听器
 onMounted(() => {
   chrome.storage.sync.get('count', (result) => {
@@ -74,19 +66,19 @@ onMounted(() => {
       applyNewStyle.value = result.interfaceStyle == 'precise';
     }
   });
-  chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
-    timeRemaining.value = response.timeRemaining;
-  });
+  // chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
+  //   timeRemaining.value = response.timeRemaining;
+  // });
 
   // 设置一个定时器来每秒更新 timeRemaining， 通过向service worker发送信息获取
-  timer = setInterval(() => {
-    if (timeRemaining.value > 0) {
-      timeRemaining.value--;
-    } else {
-      clearInterval(timer);  // 如果时间到了，清除定时器
-    }
-  }, 1000);
-});
+//   timer = setInterval(() => {
+//     if (timeRemaining.value > 0) {
+//       timeRemaining.value--;
+//     } else {
+//       clearInterval(timer);  // 如果时间到了，清除定时器
+//     }
+//   }, 1000);
+// });
 
 //watch监听interfaceStyle的变化
 watch(applyNewStyle, (newVal) => {
@@ -118,12 +110,12 @@ const generateWordcloud = async () => {
   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/wordcloud' });
 }
 
-const formattedTime = computed(() => {
-  const hours = Math.floor(timeRemaining.value / 3600);
-  const minutes = Math.floor((timeRemaining.value % 3600) / 60);
-  const seconds = timeRemaining.value % 60;
-  return `${hours} hours ${minutes} minutes ${seconds} seconds`;
-})
+// const formattedTime = computed(() => {
+//   const hours = Math.floor(timeRemaining.value / 3600);
+//   const minutes = Math.floor((timeRemaining.value % 3600) / 60);
+//   const seconds = timeRemaining.value % 60;
+//   return `${hours} hours ${minutes} minutes ${seconds} seconds`;
+// })
 
 const exportMarkdown = async () => {
   let { todayChat } = await chrome.storage.local.get('todayChat')
