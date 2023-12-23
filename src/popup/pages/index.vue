@@ -20,11 +20,11 @@
       </div>
 
       <div class="flex justify-center mb-4">
-      <label class="flex items-center space-x-3">
-        <input type="checkbox" v-model="applyNewStyle">
-        <span>{{ label }}</span>
-      </label>
-    </div>
+        <label class="flex items-center space-x-3">
+          <input type="checkbox" v-model="applyNewStyle">
+          <span>{{ label }}</span>
+        </label>
+      </div>
       <div class="flex justify-center space-x-4">
         <!-- <button
             class="px-4 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow hover:bg-purple-600 transition duration-300"
@@ -62,7 +62,7 @@ onMounted(() => {
   });
 
   chrome.storage.sync.get('interfaceStyle', (result) => {
-    if(result.interfaceStyle) {
+    if (result.interfaceStyle) {
       applyNewStyle.value = result.interfaceStyle == 'precise';
     }
   });
@@ -71,26 +71,36 @@ onMounted(() => {
   // });
 
   // 设置一个定时器来每秒更新 timeRemaining， 通过向service worker发送信息获取
-//   timer = setInterval(() => {
-//     if (timeRemaining.value > 0) {
-//       timeRemaining.value--;
-//     } else {
-//       clearInterval(timer);  // 如果时间到了，清除定时器
-//     }
-//   }, 1000);
+  //   timer = setInterval(() => {
+  //     if (timeRemaining.value > 0) {
+  //       timeRemaining.value--;
+  //     } else {
+  //       clearInterval(timer);  // 如果时间到了，清除定时器
+  //     }
+  //   }, 1000);
 });
 
 //watch监听interfaceStyle的变化
 watch(applyNewStyle, (newVal) => {
-  if(newVal) {
-    // label.value = "Please refresh the page to apply new styles.";
-    chrome.storage.sync.set({ interfaceStyle:  'precise'});
+  if (newVal) {
+    label.value = "Please refresh the page to apply new styles.";
+    chrome.storage.sync.set({ interfaceStyle: 'precise' });
+    chrome.runtime.sendMessage({
+      interfaceStyle: 'precise'
+    }, (response) => {
+      console.log('response', response)
+    });
+    console.log('applyNewStyle', newVal)
   } else {
-    // label.value = "Apply New Style";
-    chrome.storage.sync.set({ interfaceStyle:  'normal'});
+    label.value = "Apply New Style";
+    chrome.storage.sync.set({ interfaceStyle: 'normal' });
+    chrome.runtime.sendMessage({
+      interfaceStyle: 'simple'
+    }, (response) => {
+      console.log('response', response)
+    });
+    console.log('applyNewStyle', newVal)
   }
-  chrome.runtime.sendMessage({
-    interfaceStyle: 'precise'});
 });
 
 // 在组件卸载时清除定时器

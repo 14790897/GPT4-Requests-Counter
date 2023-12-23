@@ -6,6 +6,35 @@ const recordedIncrements = new Set() // 用于存储已经记录过的增量输�
 const nodeTimers = new Map() // 用于存储每个节点的定时器
 let isLocked = false // 锁标志
 
+// 更新输入栏的样式的代码
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  console.log('message.interfaceStyle', message.interfaceStyle)
+  try {
+    if (message.interfaceStyle) {
+      if (message.interfaceStyle == 'precise') {
+        const interfaceStyle = 'precise'
+        await updateTextareaAndTime(interfaceStyle)
+        console.log('interfaceStyle', interfaceStyle)
+        sendResponse({ reply: 'Response from listener' })
+      } else {
+        const interfaceStyle = 'simple'
+        await updateTextareaAndTime(interfaceStyle)
+        console.log('interfaceStyle', interfaceStyle)
+        sendResponse({ reply: 'Response from listener' })
+      }
+    }
+  } catch (error) {
+    console.error('Failed to update interfaceStyle:', error)
+    sendResponse({
+      error: 'Failed to update interfaceStyle.',
+      timeRemaining: 0,
+    })
+  }
+})
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  return true // Indicate that response will be sent asynchronously
+})
 class MessageLimiter {
   private limit: number
   private windowSize: number
@@ -222,25 +251,11 @@ const observer = new MutationObserver(debouncedCallback)
 const config = { subtree: true, characterData: true }
 observer.observe(document.body, config)
 
-// 更新输入栏的样式的代码
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.interfaceStyle) {
-    if (message.interfaceStyle == 'precise') {
-      const interfaceStyle = 'precise'
-      updateTextareaAndTime(interfaceStyle)
-    } else {
-      const interfaceStyle = 'simple'
-      updateTextareaAndTime(interfaceStyle)
-    }
-  }
-})
-
-async function updateTextareaAndTime(interfaceStyle:string) {
+async function updateTextareaAndTime(interfaceStyle: string) {
   const textarea = getTextArea()
   if (!textarea) return
 
   try {
-    console.log('interfaceStyle', interfaceStyle)
     if (interfaceStyle == 'precise') {
       const count = await messageLimiter.getCurrentMessageCount()
       // Provide different messages based on the message count
@@ -302,14 +317,20 @@ function formatTime(timeInSeconds: number) {
   return `${hours} hours ${minutes} minutes`
 }
 
-const { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
+// const { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
+let interfaceStyle: string = 'precise'
+chrome.storage.sync.get('interfaceStyle', (result) => {
+  interfaceStyle = result.interfaceStyle || 'precise'
+  updateTextareaAndTime(interfaceStyle)
+})
 
 // 立即更新一次数据
 updateTextareaAndTime(interfaceStyle)
 
 // 每隔1秒更新一次数据
-setInterval(updateTextareaAndTime(interfaceStyle), 1000)
-
+setInterval(() => {
+  updateTextareaAndTime(interfaceStyle)
+}, 1000)
 // 监听计数的变化（考虑到有多个网页的关系，所以说这里是要监听存储变化）
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.count) {
@@ -317,70 +338,3 @@ chrome.storage.onChanged.addListener((changes) => {
     console.log('count变化了   in chrome.storage.onChanged.addListener')
   }
 })
-
-// let timer = null // 用于存储计时器
-// const startTimer = () => {
-//   timer = setTimeout(
-//     () => {
-//       chrome.storage.sync.set({ count: 0, timerStarted: false })
-//       timer = null
-//     },
-//     3 * 60 * 60 * 1000
-//   )
-// }
-
-// async function updateTextarea() {
-//   // 每次都重新获取 textarea，以防它被动态添加或删除
-//   const textarea = document.getElementById('prompt-textarea')
-
-//   if (textarea) {
-//     try {
-//       // 获取存储的计数
-//       const result = await chrome.storage.sync.get('count')
-//       const count = result.count || 0
-//       // 假设 timeRemaining 是在这个作用域内可用的
-//       // 更新 textarea 的 placeholder
-//       textarea.placeholder = `Count: ${count} Time Remaining: ${timeRemaining}`
-//     } catch (error) {
-//       console.error('Failed to get count from storage:', error)
-//     }
-//   } else {
-//     console.log('textarea not found.')
-//   }
-// }
-
-// // 调用这个函数以更新 textarea
-// updateTextarea()
-
-// const updateTime = async () => {
-//   if (textarea) {
-//     chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
-//       timeRemaining = response.timeRemaining
-//       timeRemaining = formattime(timeRemaining)
-//       textarea.placeholder = `Count: ${count}   Time Remaining: ${timeRemaining}`
-//     })
-//   } else {
-//     console.log('textarea not found.')
-//   }
-// }
-
-// function formattime(timeRemaining) {
-//   const hours = Math.floor(timeRemaining / 3600)
-//   const minutes = Math.floor((timeRemaining % 3600) / 60)
-//   const seconds = timeRemaining % 60
-//   return `${hours} hours ${minutes} minutes ${seconds} seconds`
-// }
-
-// // 立即更新一次数据
-// updateTime()
-
-// // 每隔10秒更新一次剩余时间数据
-// setInterval(updateTime, 10000)
-
-// // 监听计数的变化
-// chrome.storage.onChanged.addListener((changes, namespace) => {
-//   if (changes.count) {
-//     // 更新计数显示
-//     updateTextarea() // 调用函数以更新 textarea
-//   }
-// })
