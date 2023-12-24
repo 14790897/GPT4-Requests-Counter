@@ -1,8 +1,6 @@
 // utils.js
 
-export async function resetDailyCountAndUpdate(
-  lastUpdatedDate: string,
-) {
+export async function resetDailyCountAndUpdate(lastUpdatedDate: string) {
   try {
     //要先把count放入todayAllCount，count清零
     await updateCountsAndChartData(lastUpdatedDate)
@@ -31,6 +29,8 @@ export async function resetDailyCountAndUpdate(
     // 如果是新的一天，重置今日计数，清空todaychat
     await chrome.storage.sync.set({
       todayAllCount: 0,
+    })
+    await chrome.storage.local.set({
       todayChat: '',
     })
   } catch (error) {
@@ -39,7 +39,7 @@ export async function resetDailyCountAndUpdate(
   }
 }
 
-export async function startTimer(duration: number, currentDate:string) {
+export async function startTimer(duration: number, currentDate: string) {
   try {
     //目前应该只有这里也更新了时间，但是这里的时间应该是在上面的函数之后触发
     const startTime = Date.now()

@@ -48,7 +48,7 @@ const props = defineProps({
     default: ''
   }
 });
-
+// TODO 这里其实可以获取的时候更新这个数据这个时候也不会占用太多的内存
 chrome.storage.sync.get('todayAllCount', (result) => {
   todayAllCount.value = result.todayAllCount || 0;
 });
