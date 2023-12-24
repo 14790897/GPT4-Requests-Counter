@@ -4,6 +4,8 @@ export async function resetDailyCountAndUpdate(
   lastUpdatedDate: string,
 ) {
   try {
+    //要先把count放入todayAllCount，count清零
+    await updateCountsAndChartData(lastUpdatedDate)
     //如果是新的一天, 将昨日的键更新到同步存储中
     const { todayAllCount } = await chrome.storage.sync.get('todayAllCount')
     let { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
@@ -21,8 +23,8 @@ export async function resetDailyCountAndUpdate(
       ':' +
       minutes.toString().padStart(2, '0')
     const todayFirstChatTime = formattedTime
-    await chrome.storage.sync.set({todayFirstChatTime})
- 
+    await chrome.storage.sync.set({ todayFirstChatTime })
+
     dateAndCount[lastUpdatedDate] = todayAllCount
     await chrome.storage.sync.set({ dateAndCount })
 

@@ -78,19 +78,19 @@ chrome.runtime.onInstalled.addListener(async function (details) {
   }
 })
 
-function clearState() {
-  // Clear count, timer status, startTime, and duration
-  chrome.storage.sync.set(
-    {
-      count: 0,
-      timerStarted: false,
-      startTime: 0,
-      duration: 0,
-      todayAllCount: 0,
-      lastUpdatedDate: new Date().toDateString(),
-    },
-    function () {
-      console.log('Default values set.')
-    }
-  )
-}
+// function clearState() {
+//   // Clear count, timer status, startTime, and duration
+//   chrome.storage.sync.set(
+//     {
+//       count: 0,
+//       timerStarted: false,
+//       startTime: 0,
+//       duration: 0,
+//       todayAllCount: 0,
+//       lastUpdatedDate: new Date().toDateString(),
+//     },
+//     function () {
+//       console.log('Default values set.')
+//     }
+//   )
+// }
