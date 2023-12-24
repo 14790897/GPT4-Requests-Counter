@@ -140,10 +140,11 @@ const callback = async function (mutationsList, observer) {
           if (!recordedIncrements.has(parentNode)) {
             // 如果有增量输出，并且这个增量是新的
             try {
-              const result = await chrome.storage.sync.get('count')
+              const result = await chrome.storage.sync.get(['count', 'timeList'])
               let count = result.count || 0
               count++
-              // recordedIncrements = new set()
+              const timeList = result.timeList || []
+              timeList.push(new Date().toDateString())
               // 如果这是第一次计时，开始计时
               const { timerStarted } =
                 await chrome.storage.sync.get('timerStarted')
@@ -155,7 +156,7 @@ const callback = async function (mutationsList, observer) {
                 }) // 发送倒计时开始的消息，同时在背景脚本中记录当前的时间，这个应该在count设置之前执行
               }
               console.log('count====================================', count)
-              await chrome.storage.sync.set({ count })
+              await chrome.storage.sync.set({ count, timeList})
               //这个是用于正确的计时方式
               messageLimiter.trySendMessage()
               const { countOutput } = await chrome.storage.sync.get('count')
