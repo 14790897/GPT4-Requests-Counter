@@ -70,7 +70,7 @@ chrome.runtime.onInstalled.addListener(async function (details) {
       lastIncrementTime: 0,
       dateAndCount: {},
       todayFirstChatTime: 'sorry, no time',
-      interfaceStyle: 'precise',
+      interfaceStyle: 'normal',
       timestamps: [],
     })
     await chrome.storage.local.set({ todayChat: '' }),

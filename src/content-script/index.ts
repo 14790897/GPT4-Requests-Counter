@@ -91,7 +91,7 @@ class MessageLimiter {
 }
 
 // 使用方法
-const limit: number = 40 // 三小时内最多40条消息
+const limit: number = 200 // 三小时内最多200条消息
 const threeHours: number = 3 * 60 * 60 * 1000 // 三小时的毫秒数
 const messageLimiter = new MessageLimiter(limit, threeHours)
 
