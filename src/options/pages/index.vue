@@ -13,8 +13,8 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
+//这个下面是数据的图表
 import * as echarts from 'echarts';
 const chartRef = ref(null);
 

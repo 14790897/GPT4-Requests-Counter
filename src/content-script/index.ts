@@ -144,7 +144,7 @@ const callback = async function (mutationsList, observer) {
               let count = result.count || 0
               count++
               const timeList = result.timeList || []
-              timeList.push(new Date().toDateString())
+              timeList.push(new Date().toISOString())
               // 如果这是第一次计时，开始计时
               const { timerStarted } =
                 await chrome.storage.sync.get('timerStarted')
@@ -155,7 +155,6 @@ const callback = async function (mutationsList, observer) {
                   duration: 3 * 60 * 60 * 1000,
                 }) // 发送倒计时开始的消息，同时在背景脚本中记录当前的时间，这个应该在count设置之前执行
               }
-              console.log('count====================================', count)
               await chrome.storage.sync.set({ count, timeList})
               //这个是用于正确的计时方式
               messageLimiter.trySendMessage()
