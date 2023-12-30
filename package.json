@@ -2,6 +2,7 @@
   "dependencies": {
     "echarts": "^5.4.3",
     "echarts-wordcloud": "^2.1.0",
+    "release-please": "^16.6.0",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
   },
