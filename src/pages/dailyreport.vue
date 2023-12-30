@@ -2,11 +2,11 @@
   <div class="container mx-auto p-4">
     <h1 class="text-3xl font-bold text-center mb-6">Today Report</h1>
 
-    <div v-if="currentPage === 1">
+    <!-- <div v-if="currentPage === 1">
         <TmieList />
-      </div>
+      </div> -->
 
-    <div v-if="currentPage === 2">
+    <div v-if="currentPage === 1">
       <FirstPage :hotTopics="hotTopics" :todayParagraph="todayParagraph" />
     </div>
 
@@ -14,7 +14,7 @@
       <SecondPage />
     </div> -->
 
-    <div v-if="currentPage === 3">
+    <div v-if="currentPage === 2">
       <WordCloud :response="words"/>
     </div>
 
@@ -40,7 +40,7 @@ interface Topic {
 const hotTopics = ref<Topic[]>([]); 
 const todayParagraph = ref<string>('');
 const currentPage = ref(1);
-const totalPages = 3; // 总页数
+const totalPages = 2; // 总页数
 
 onMounted(() => {
   getWordData();
