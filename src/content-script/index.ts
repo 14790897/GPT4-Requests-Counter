@@ -156,28 +156,7 @@ const callback = async function (mutationsList, observer) {
           if (!recordedIncrements.has(parentNode)) {
             // 如果有增量输出，并且这个增量是新的
             try {
-              let { count } = await chrome.storage.sync.get('count')
-              let { timeList } = await chrome.storage.local.get('timeList')
-              // 如果 timeList 未定义或不是数组，则初始化为空数组
-              if (!Array.isArray(timeList)) {
-                timeList = []
-              }
-              count++
-              timeList.push(new Date().toISOString())
-              // 如果这是第一次计时，开始计时
-              const { timerStarted } =
-                await chrome.storage.sync.get('timerStarted')
-              if (!timerStarted) {
-                // await chrome.storage.sync.set({ timerStarted: true })
-                chrome.runtime.sendMessage({
-                  timerStarted: true,
-                  duration: 3 * 60 * 60 * 1000,
-                }) // 发送倒计时开始的消息，同时在背景脚本中记录当前的时间，这个应该在count设置之前执行
-              }
-              await chrome.storage.sync.set({ count })
-              await chrome.storage.local.set({ timeList })
-              //这个是用于正确的计时方式
-              messageLimiter.trySendMessage()
+              await updateTimerCountData()
               const { countOutput } = await chrome.storage.sync.get('count')
               console.log(
                 'countOutput====================================',
@@ -358,3 +337,36 @@ chrome.storage.onChanged.addListener((changes) => {
     console.log('count变化了   in chrome.storage.onChanged.addListener')
   }
 })
+
+
+async function updateTimerCountData() {
+  // 获取计数和时间列表
+  let { count } = await chrome.storage.sync.get('count')
+  let { timeList } = await chrome.storage.local.get('timeList')
+
+  // 如果 timeList 未定义或不是数组，则初始化为空数组
+  if (!Array.isArray(timeList)) {
+    timeList = []
+  }
+
+  // 更新计数和时间列表
+  count++
+  timeList.push(new Date().toISOString())
+
+  // 检查是否是第一次计时
+  const { timerStarted } = await chrome.storage.sync.get('timerStarted')
+  if (!timerStarted) {
+    // 发送倒计时开始的消息
+    chrome.runtime.sendMessage({
+      timerStarted: true,
+      duration: 3 * 60 * 60 * 1000,
+    })
+  }
+
+  // 保存更新后的计数和时间列表
+  await chrome.storage.sync.set({ count })
+  await chrome.storage.local.set({ timeList })
+
+  // 尝试发送消息
+  messageLimiter.trySendMessage()
+}
