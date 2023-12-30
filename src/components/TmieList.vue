@@ -1,14 +1,16 @@
 <template>
     <div class="container mx-auto p-4">
         <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">talk time</h2>
-        <div v-for="(times, date) in groupedTimeList" :key="date" class="mb-6">
-            <h3 class="text-xl font-semibold text-gray-700">{{ date }}</h3>
-            <ul :class="{ 'max-h-20 overflow-hidden': !expanded[date] }" class="list-disc pl-5 mt-2">
-                <li v-for="(time, index) in times" :key="index" class="text-gray-600">
-                    {{ time }}
-                </li>
-            </ul>
-            <button @click="toggle(date)" class="text-blue-500 text-sm">{{ expanded[date] ? 'less' : 'more' }}</button>
+        <div class="flex flex-wrap">
+            <div v-for="(times, date) in groupedTimeList" :key="date" class="date-container mb-6 mr-4">
+                <h3 class="text-xl font-semibold text-gray-700">{{ date }}</h3>
+                <ul :class="{ 'max-h-20 overflow-hidden': !expanded[date] }" class="list-disc pl-5 mt-2">
+                    <li v-for="(time, index) in times" :key="index" class="text-gray-600">
+                        {{ time }}
+                    </li>
+                </ul>
+                <button @click="toggle(date)" class="text-blue-500 text-sm">{{ expanded[date] ? 'less' : 'more' }}</button>
+            </div>
         </div>
     </div>
 </template>
@@ -30,7 +32,7 @@ export default {
         };
 
         const fetchTimeList = async () => {
-            const result = await chrome.storage.sync.get(['timeList']);
+            const result = await chrome.storage.local.get(['timeList']);
             timeList.value = result.timeList || [];
             groupTimesByDate();
         };
@@ -58,3 +60,14 @@ export default {
 };
 </script>
 
+
+<style>
+.date-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 中心对齐每个日期的内容 */
+}
+
+/* 其他样式保持不变 */
+</style>
