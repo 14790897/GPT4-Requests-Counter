@@ -73,8 +73,8 @@ chrome.runtime.onInstalled.addListener(async function (details) {
       interfaceStyle: 'normal',
       timestamps: [],
     })
-    await chrome.storage.local.set({ todayChat: '' }),
-    console.log('Default values set.')
+    await chrome.storage.local.set({ todayChat: '', timeList : []}),
+      console.log('Default values set.')
   }
 })
 

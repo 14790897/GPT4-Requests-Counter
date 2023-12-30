@@ -58,6 +58,3 @@ export default {
 };
 </script>
 
-<style>
-/* 添加你的样式 */
-</style>
