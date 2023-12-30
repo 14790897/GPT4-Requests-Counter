@@ -13,3 +13,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           release-type: node
           package-name: GPT4-Requests-Counter
+permissions:
+  contents: write
+
