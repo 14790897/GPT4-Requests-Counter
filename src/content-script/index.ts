@@ -247,7 +247,7 @@ const debouncedCallback = throttle(callback, 500) // 0.5秒内的变化只会触
 
 const observer = new MutationObserver(debouncedCallback)
 
-const config = { subtree: true, characterData: true, childList: true }
+const config = { subtree: true, characterData: true}
 observer.observe(document.body, config)
 
 async function updateTextareaAndTime(interfaceStyle: string) {
