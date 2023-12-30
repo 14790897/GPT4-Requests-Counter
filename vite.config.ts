@@ -91,6 +91,11 @@ export default defineConfig({
         iframe: 'src/content-script/iframe/index.html',
       },
     },
+    terserOptions: {
+      compress: {
+        drop_console: true,
+      },
+    },
   },
   server: {
     port: 8888,
