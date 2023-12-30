@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: "pnpm" # 查看 package.json 和 package-lock.json
+  - package-ecosystem: "npm" # 查看 package.json 和 package-lock.json
     directory: "/" # 在项目根目录下查找 package 文件
     schedule:
       interval: "weekly" # 每周检查更新
