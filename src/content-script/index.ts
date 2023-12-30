@@ -294,9 +294,9 @@ function formatTime(timeInSeconds: number) {
 }
 
 // const { interfaceStyle } = await chrome.storage.sync.get('interfaceStyle')
-let interfaceStyle: string = 'precise'
+let interfaceStyle: string = 'normal'
 chrome.storage.sync.get('interfaceStyle', (result) => {
-  interfaceStyle = result.interfaceStyle || 'precise'
+  interfaceStyle = result.interfaceStyle || 'normal'
   updateTextareaAndTime(interfaceStyle)
 })
 

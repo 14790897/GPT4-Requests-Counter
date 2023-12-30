@@ -22,13 +22,13 @@
                     </ul>
                 </div>
 
-                <button @click="toggle(date)" class="text-blue-500 text-sm">{{ expanded[date] ? 'less' : 'more' }}</button>
+                <button class="text-blue-500 text-sm" @click="toggle(date)">{{ expanded[date] ? 'less' : 'more' }}</button>
             </div>
         </div>
         
         <!-- 添加切换视图的按钮 -->
         <div class="button-container">
-                <button @click="toggleDetailView" class="mb-4 bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400">
+                <button class="mb-4 bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400" @click="toggleDetailView">
                     {{ isDetail ? 'Switch to Summary View' : 'Switch to Detail View' }}
                 </button>
             </div>

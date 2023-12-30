@@ -21,7 +21,7 @@
 
       <div class="flex justify-center mb-4">
         <label class="flex items-center space-x-3">
-          <input type="checkbox" v-model="applyNewStyle">
+          <input v-model="applyNewStyle" type="checkbox">
           <span>{{ label }}</span>
         </label>
       </div>

@@ -7,7 +7,7 @@
       </div> -->
 
     <div v-if="currentPage === 1">
-      <FirstPage :hotTopics="hotTopics" :todayParagraph="todayParagraph" />
+      <FirstPage :hot-topics="hotTopics" :today-paragraph="todayParagraph" />
     </div>
 
     <!-- <div v-if="currentPage === 2">
@@ -18,7 +18,7 @@
       <WordCloud :response="words"/>
     </div>
 
-    <Pagination :currentPage="currentPage" :totalPages="totalPages" @update:currentPage="updatePage" />
+    <Pagination :current-page="currentPage" :total-pages="totalPages" @update:currentPage="updatePage" />
   </div>
 </template>
 
