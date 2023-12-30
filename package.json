@@ -2,7 +2,7 @@
   "dependencies": {
     "echarts": "^5.4.3",
     "echarts-wordcloud": "^2.1.0",
-    "vue": "^3.3.8",
+    "vue": "^3.4.2",
     "vue-router": "^4.2.5"
   },
   "description": "__MSG_extensionDescription__",
