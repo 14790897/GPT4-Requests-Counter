@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: "pnpm" # 查看 package.json 和 package-lock.json
+    directory: "/" # 在项目根目录下查找 package 文件
+    schedule:
+      interval: "weekly" # 每周检查更新
+    open-pull-requests-limit: 10 # 同时最多打开 10 个更新 PR
