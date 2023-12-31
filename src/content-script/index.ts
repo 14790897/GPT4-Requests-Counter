@@ -108,7 +108,7 @@ const callback = async function (mutationsList, observer) {
     const mutation = mutationsList[0]
     // for (const mutation of mutationsList) { 减少执行次数
     if (mutation.type === 'characterData') {
-      let parentNode = mutation.target.parentNode.parentNode // 获取父节点  && parentNode.classList.contains('markdown')
+      let parentNode = mutation.target // 获取父节点  && parentNode.classList.contains('markdown')
       // 循环遍历所有父节点，直到找到一个包含特定data-testid属性或到达根节点
       parentNode = findParentNode(parentNode)
       //这里是不是少了如果上面循环没找到应该直接退出的
@@ -125,7 +125,7 @@ const callback = async function (mutationsList, observer) {
         let { lastIncrementTime } =
           await chrome.storage.sync.get('lastIncrementTime') // 用于存储上一次增量输出的时间
         // increment = '123455'
-        // if ((increment && now - lastIncrementTime >= 300)) {
+        if ((increment && now - lastIncrementTime >= 100)) {
           //只有间隔0.3秒钟以上才能再增加
           lastIncrementTime = now // 更新上次增加的时间
           await chrome.storage.sync.set({ lastIncrementTime })
@@ -172,7 +172,7 @@ const callback = async function (mutationsList, observer) {
 
           // 存储新的定时器,用于再次循环的时候遇到同样的节点可以清除计时，这是为了在对话全部输出之后才删除节点
           nodeTimers.set(parentNode, timer)
-        // }
+        }
       }
     }
     // }
@@ -219,8 +219,8 @@ function throttle(func, limit) {
   }
 }
 
-// 使用防抖的 MutationObserver 回调
-const debouncedCallback = throttle(callback, 500) // 0.5秒内的变化只会触发一次
+// 使用防抖的 MutationObserver 回调  重点是只能同时有一个线程在执行
+const debouncedCallback = throttle(callback, 200) // 0.5秒内的变化只会触发一次
 
 const observer = new MutationObserver(debouncedCallback)
 
@@ -401,6 +401,7 @@ async function updateTimerCountData(node) {
 
 
 function findParentNode(parentNode) {
+  try {
   while (parentNode) {
     if (parentNode.getAttribute) {
       const testId = parentNode.getAttribute('data-testid')
@@ -413,5 +414,8 @@ function findParentNode(parentNode) {
     }
     parentNode = parentNode.parentNode
   }
+  } catch (error) {
+  console.log('error in findParentNode', error)  
+}
   return parentNode
 }

@@ -4,12 +4,7 @@ export async function resetDailyCountAndUpdate(lastUpdatedDate: string) {
   try {
     //要先把count放入todayAllCount，count清零
     await updateCountsAndChartData(lastUpdatedDate)
-    //如果是新的一天, 将昨日的键更新到同步存储中
-    const { todayAllCount } = await chrome.storage.sync.get('todayAllCount')
-    let { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
-    if (!dateAndCount) {
-      dateAndCount = {} // 初始化 dateAndCount 对象，如果它是 undefined
-    }
+
     //如果是新的一天，刷新为新的一天的第一次聊天时间
     const now = new Date()
     const hours = now.getHours() // 获取小时
@@ -23,9 +18,6 @@ export async function resetDailyCountAndUpdate(lastUpdatedDate: string) {
     const todayFirstChatTime = formattedTime
     await chrome.storage.sync.set({ todayFirstChatTime })
 
-    dateAndCount[lastUpdatedDate] = todayAllCount
-    await chrome.storage.sync.set({ dateAndCount })
-
     // 如果是新的一天，重置今日计数，清空todaychat
     await chrome.storage.sync.set({
       todayAllCount: 0,
@@ -35,7 +27,6 @@ export async function resetDailyCountAndUpdate(lastUpdatedDate: string) {
     })
   } catch (error) {
     console.error('Error in resetDailyCountAndUpdate:', error)
-    console.error('Stack trace:', error.stack)
   }
 }
 
@@ -64,7 +55,6 @@ export async function getTimeRemaining(startTime: number, duration: number) {
     return roundedTimeRemaining
   } catch (error) {
     console.error('Error in getTimeRemaining:', error)
-    console.error('Stack trace:', error.stack)
     return 0
   }
 }
@@ -87,6 +77,5 @@ export async function updateCountsAndChartData(lastUpdatedDate: string) {
     await chrome.storage.sync.set({ dateAndCount })
   } catch (error) {
     console.error('Error in updateCountsAndChartData:', error)
-    console.error('Stack trace:', error.stack)
   }
 }
