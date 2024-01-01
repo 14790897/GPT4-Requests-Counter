@@ -1,4 +1,5 @@
 <template>
+    <div>
     <div class="container mx-auto p-4">
         <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">talk time</h2>
         <div class="flex flex-wrap">
@@ -25,13 +26,13 @@
                 <button class="text-blue-500 text-sm" @click="toggle(date)">{{ expanded[date] ? 'less' : 'more' }}</button>
             </div>
         </div>
-
-        <!-- 添加切换视图的按钮 -->
-        <div class="button-container">
-            <button class="mb-4 bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400" @click="toggleDetailView">
-                {{ isDetail ? 'Switch to Summary View' : 'Switch to Detail View' }}
-            </button>
-        </div>
+    </div>
+    </div>
+    <!-- 添加切换视图的按钮 -->
+    <div class="button-container mb-4">
+        <button class="mb-4 bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400" @click="toggleDetailView">
+            {{ isDetail ? 'Switch to Summary View' : 'Switch to Detail View' }}
+        </button>
     </div>
 </template>
 
@@ -113,5 +114,7 @@ export default {
     display: flex;
     justify-content: center;
     /* 水平居中 */
+    margin-top: auto; /* 将按钮推到底部 */
+
 }
 </style>
