@@ -63,15 +63,15 @@ const getTodayParagraph = () => {
 
 const getWordData = async () => {
   let { todayChat } = await chrome.storage.local.get('todayChat');
-  //之前放入数据的时候修改了格式
-  todayChat = todayChat.replace(/You:|ChatGPT:/g, '');
-
-  // console.log('todayChat:', todayChat)
-
   if (!todayChat) {
     console.error('Error: Failed to retrieve todayChat from chrome.storage.local');
     return;
   }
+  //之前放入数据的时候修改了格式
+  todayChat = todayChat.replace(/You:|ChatGPT:/g, '');
+
+  console.log('body: JSON.stringify({ text: todayChat })', JSON.stringify({ text: todayChat }))
+
   try {
     const response = await fetch('https://nwkazoq0sc.execute-api.ap-southeast-2.amazonaws.com/production/', {
       method: 'POST',
