@@ -75,6 +75,10 @@ export async function updateCountsAndChartData(lastUpdatedDate: string) {
     const { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
     dateAndCount[lastUpdatedDate] = newCount
     await chrome.storage.sync.set({ dateAndCount })
+
+    // 获取并打印最新的值
+    const { dateAndCount: updatedDateAndCount } = await chrome.storage.sync.get('dateAndCount')
+    console.log('Updated dateAndCount:', updatedDateAndCount)
   } catch (error) {
     console.error('Error in updateCountsAndChartData:', error)
   }

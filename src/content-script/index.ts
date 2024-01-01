@@ -7,30 +7,30 @@ const nodeTimers = new Map() // 用于存储每个节点的定时器
 let isLocked = false // 锁标志
 
 // 更新输入栏的样式的代码
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  console.log('message.interfaceStyle', message.interfaceStyle)
-  try {
-    if (message.interfaceStyle) {
-      if (message.interfaceStyle == 'precise') {
-        const interfaceStyle = 'precise'
-        await updateTextareaAndTime(interfaceStyle)
-        console.log('interfaceStyle', interfaceStyle)
-        sendResponse({ reply: 'Response from listener' })
-      } else {
-        const interfaceStyle = 'simple'
-        await updateTextareaAndTime(interfaceStyle)
-        console.log('interfaceStyle', interfaceStyle)
-        sendResponse({ reply: 'Response from listener' })
-      }
-    }
-  } catch (error) {
-    console.error('Failed to update interfaceStyle:', error)
-    sendResponse({
-      error: 'Failed to update interfaceStyle.',
-      timeRemaining: 0,
-    })
-  }
-})
+// chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+//   console.log('message.interfaceStyle', message.interfaceStyle)
+//   try {
+//     if (message.interfaceStyle) {
+//       if (message.interfaceStyle == 'precise') {
+//         const interfaceStyle = 'precise'
+//         await updateTextareaAndTime(interfaceStyle)
+//         console.log('interfaceStyle', interfaceStyle)
+//         sendResponse({ reply: 'Response from listener' })
+//       } else {
+//         const interfaceStyle = 'simple'
+//         await updateTextareaAndTime(interfaceStyle)
+//         console.log('interfaceStyle', interfaceStyle)
+//         sendResponse({ reply: 'Response from listener' })
+//       }
+//     }
+//   } catch (error) {
+//     console.error('Failed to update interfaceStyle:', error)
+//     sendResponse({
+//       error: 'Failed to update interfaceStyle.',
+//       timeRemaining: 0,
+//     })
+//   }
+// })
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true // Indicate that response will be sent asynchronously

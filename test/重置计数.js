@@ -1,4 +1,5 @@
 //下列代码需要在service worker的控制台执行
+//要模拟第二天，先执行下面第二段代码,再执行下面的一段代码
 //下面是模拟开始时间在三小时之前的代码
 chrome.storage.sync.set(
   { startTime: Date.now() - 3 * 60 * 60 * 1000 * 2 },
@@ -15,8 +16,8 @@ const currentDate = new Date();
 // 减去一天
 currentDate.setDate(currentDate.getDate() - 1);
 
-// 将日期转换为 YYYY-MM-DD 格式的字符串
-const lastUpdatedDate = currentDate.toISOString().split('T')[0];
+// 将日期转换为date.toDateString(); 格式的字符串
+const lastUpdatedDate = currentDate.toDateString();
 
 // 保存到 chrome.storage.sync
 chrome.storage.sync.set({ lastUpdatedDate: lastUpdatedDate }, function() {
