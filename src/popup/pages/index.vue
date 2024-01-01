@@ -57,9 +57,16 @@ onMounted(() => {
     count.value = result.count || 0;
   });
 
-  chrome.storage.sync.get('todayAllCount', (result) => {
-    todayAllCount.value = result.todayAllCount || 0;
-  });
+  // chrome.storage.sync.get('todayAllCount', (result) => {
+  //   todayAllCount.value = result.todayAllCount || 0;
+  // });
+
+  (async () => {
+    const result = await chrome.storage.sync.get(['todayAllCount', 'count'])
+    const todayAllCount0 = result.todayAllCount || 0;
+    const count = result.count || 0;
+    todayAllCount.value = todayAllCount0 + count
+  })();
 
   chrome.storage.sync.get('interfaceStyle', (result) => {
     if (result.interfaceStyle) {

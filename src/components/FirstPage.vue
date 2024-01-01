@@ -49,9 +49,17 @@ const props = defineProps({
   }
 });
 // TODO 这里其实可以获取的时候更新这个数据这个时候也不会占用太多的内存
-chrome.storage.sync.get('todayAllCount', (result) => {
-  todayAllCount.value = result.todayAllCount || 0;
+// chrome.storage.sync.get('todayAllCount', (result) => {
+//   todayAllCount.value = result.todayAllCount || 0;
+// });
+
+onMounted(async () => {
+  const result = await chrome.storage.sync.get(['todayAllCount','count'])
+  const todayAllCount0 = result.todayAllCount || 0;
+  const count = result.count || 0;
+  todayAllCount.value = todayAllCount0 + count
 });
+
 chrome.storage.sync.get('todayFirstChatTime', (result) => {
   todayFirstChatTime.value = result.todayFirstChatTime || 'sorry, no data';
 });

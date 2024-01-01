@@ -66,6 +66,8 @@ const getWordData = async () => {
   //之前放入数据的时候修改了格式
   todayChat = todayChat.replace(/You:|ChatGPT:/g, '');
 
+  // console.log('todayChat:', todayChat)
+
   if (!todayChat) {
     console.error('Error: Failed to retrieve todayChat from chrome.storage.local');
     return;
