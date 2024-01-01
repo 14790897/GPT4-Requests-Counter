@@ -1,5 +1,15 @@
 # Changelog
 
+### [1.1.1](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.1.0...v1.1.1) (2024-01-01)
+
+
+### Bug Fixes
+
+* 很遗憾原来过去两个月中我设置的图表数据都是错的 ([4dc20b4](https://www.github.com/14790897/GPT4-Requests-Counter/commit/4dc20b475646bb3b14464898d407ac7c96c1983f))
+* 按时间排序 ([4684aa5](https://www.github.com/14790897/GPT4-Requests-Counter/commit/4684aa5a0d5d5386c6605bf96045308cc1c98173))
+* 显示正确的todayAllCount ([d7a3be3](https://www.github.com/14790897/GPT4-Requests-Counter/commit/d7a3be357763a767af2a51128889b406affdb34c))
+* 移除pr flow ([7f00f74](https://www.github.com/14790897/GPT4-Requests-Counter/commit/7f00f74692edd05cc7f8b24f81236c06eb2e889e))
+
 ## [1.1.0](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.0.1...v1.1.0) (2023-12-30)
 
 
