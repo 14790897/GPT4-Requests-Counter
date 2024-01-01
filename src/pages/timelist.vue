@@ -16,7 +16,7 @@
                 <div v-else>
                     <!-- 简略视图：显示每小时统计 -->
                     <ul class="list-disc pl-5 mt-2">
-                        <li v-for="(count, hour) in times.summary" :key="hour" class="text-gray-600">
+                        <li v-for="(count, hour) in sortObjectByKeys(times.summary)" :key="hour" class="text-gray-600">
                             {{ hour }}: {{ count }} times
                         </li>
                     </ul>
@@ -25,13 +25,13 @@
                 <button class="text-blue-500 text-sm" @click="toggle(date)">{{ expanded[date] ? 'less' : 'more' }}</button>
             </div>
         </div>
-        
+
         <!-- 添加切换视图的按钮 -->
         <div class="button-container">
-                <button class="mb-4 bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400" @click="toggleDetailView">
-                    {{ isDetail ? 'Switch to Summary View' : 'Switch to Detail View' }}
-                </button>
-            </div>
+            <button class="mb-4 bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400" @click="toggleDetailView">
+                {{ isDetail ? 'Switch to Summary View' : 'Switch to Detail View' }}
+            </button>
+        </div>
     </div>
 </template>
 
@@ -85,12 +85,17 @@ export default {
             groupedTimeList.value = grouped;
         };
 
-
+        const sortObjectByKeys = (obj) => {
+            return Object.keys(obj).sort().reduce((result, key) => {
+                result[key] = obj[key];
+                return result;
+            }, {});
+        };
         onMounted(() => {
             fetchTimeList();
         });
 
-        return { groupedTimeList, expanded, toggle, isDetail, toggleDetailView };
+        return { groupedTimeList, expanded, toggle, isDetail, toggleDetailView, sortObjectByKeys };
     },
 };
 </script>
@@ -106,6 +111,7 @@ export default {
 
 .button-container {
     display: flex;
-    justify-content: center; /* 水平居中 */
+    justify-content: center;
+    /* 水平居中 */
 }
 </style>
