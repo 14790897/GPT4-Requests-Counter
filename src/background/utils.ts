@@ -2,8 +2,15 @@
 
 export async function resetDailyCountAndUpdate(lastUpdatedDate: string) {
   try {
-    //要先把count放入todayAllCount，count清零
-    await updateCountsAndChartData(lastUpdatedDate)
+    //要先更新dateAndCount，然后count不能清零，因为这会导致刚刚增加的设置为零这个只能在三小时之后再清0
+    const { todayAllCount, count } = await chrome.storage.sync.get([
+      'todayAllCount',
+      'count',
+    ])
+    const newCount = Number(todayAllCount) + Number(count)
+    const { dateAndCount } = await chrome.storage.sync.get('dateAndCount')
+    dateAndCount[lastUpdatedDate] = newCount
+    await chrome.storage.sync.set({ dateAndCount })
 
     //如果是新的一天，刷新为新的一天的第一次聊天时间
     const now = new Date()
@@ -77,8 +84,8 @@ export async function updateCountsAndChartData(lastUpdatedDate: string) {
     await chrome.storage.sync.set({ dateAndCount })
 
     // 获取并打印最新的值
-    const { dateAndCount: updatedDateAndCount } = await chrome.storage.sync.get('dateAndCount')
-    console.log('Updated dateAndCount:', updatedDateAndCount)
+    // const { dateAndCount: updatedDateAndCount } = await chrome.storage.sync.get('dateAndCount')
+    // console.log('Updated dateAndCount:', updatedDateAndCount)
   } catch (error) {
     console.error('Error in updateCountsAndChartData:', error)
   }
