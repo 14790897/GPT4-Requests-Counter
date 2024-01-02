@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.1](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.2.0...v1.2.1) (2024-01-02)
+
+
+### Bug Fixes
+
+* 每天的第一次计数无法识别 ([b3635e9](https://www.github.com/14790897/GPT4-Requests-Counter/commit/b3635e9dddb48dc556499cb18c98229dfda01708))
+
 ## [1.2.0](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.1.1...v1.2.0) (2024-01-01)
 
 
