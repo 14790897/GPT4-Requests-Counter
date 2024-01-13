@@ -325,7 +325,7 @@ const callbackForImage =  (mutationsList, observer) => {
                 if (
                   node.nodeType === Node.ELEMENT_NODE &&
                   node.nodeName === 'DIV' &&
-                  node.textContent === 'Creating image'
+                  (node.textContent === 'Creating image' || node.textContent.includes('Doing research'))
                 ) {
                   console.log('检测到内容为 "creating image" 的 div 节点')
                     const parentNode = findParentNode(node)
@@ -338,7 +338,7 @@ const callbackForImage =  (mutationsList, observer) => {
             if (
               parent &&
               parent.nodeName === 'DIV' &&
-              mutation.target.textContent === 'Creating image'
+              (mutation.target.textContent === 'Creating image' || mutation.target.textContent.includes('Doing research'))
             ) {
               console.log('div 节点的内容变为 "creating image"')
               // 在这里执行你需要的操作
