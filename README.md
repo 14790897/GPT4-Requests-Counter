@@ -15,7 +15,7 @@
 ## 安装
 
 1. 从 [Google Chrome Web Store](https://chromewebstore.google.com/detail/gpt4-requests-counter/mfgcmmfakhajkaoeejceadlddfoikmap) 下载和安装插件。
-2. 或者从 GitHub 仓库下载源代码，并在 Chrome 的 `chrome://extensions/` 页面中以开发者模式加载解压后的文件夹。
+
 
 ## 使用方法
 
