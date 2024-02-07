@@ -7,9 +7,12 @@
       <p class="text-lg text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
         Today All Counts: <span class="font-semibold text-blue-600">{{ todayAllCount }}</span>
       </p>
-      <!-- <p v-if="timeRemaining > 0" class="text-lg text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
+      <p v-if="timeRemaining > 0" class="text-md text-gray-700 bg-white p-4 rounded-lg shadow mb-4">
         Time Remaining: <span class="font-semibold text-blue-600">{{ formattedTime }}</span>
-      </p> -->
+        <button @click="clearTime" class="ml-2 bg-red-500 hover:bg-red-700  text-white font-bold  text-xs rounded">
+          clear time
+        </button>
+      </p>
       <div class="flex justify-center space-x-4 mb-4">
         <button
           class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-300"
@@ -46,8 +49,8 @@
 <script setup lang="ts">
 const count = ref(0);
 const todayAllCount = ref(0);
-// const timeRemaining = ref(0);
-let timer: number;
+const timeRemaining = ref(0);
+let timer: any;
 const applyNewStyle = ref(true);
 const label = ref("Apply New Style");
 
@@ -73,18 +76,18 @@ onMounted(() => {
       applyNewStyle.value = result.interfaceStyle == 'precise';
     }
   });
-  // chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
-  //   timeRemaining.value = response.timeRemaining;
-  // });
+  chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
+    timeRemaining.value = response.timeRemaining;
+  });
 
   // 设置一个定时器来每秒更新 timeRemaining， 通过向service worker发送信息获取
-  //   timer = setInterval(() => {
-  //     if (timeRemaining.value > 0) {
-  //       timeRemaining.value--;
-  //     } else {
-  //       clearInterval(timer);  // 如果时间到了，清除定时器
-  //     }
-  //   }, 1000);
+  timer = setInterval(() => {
+    if (timeRemaining.value > 0) {
+      timeRemaining.value--;
+    } else {
+      clearInterval(timer);  // 如果时间到了，清除定时器
+    }
+  }, 1000);
 });
 
 //watch监听interfaceStyle的变化
@@ -115,6 +118,16 @@ onUnmounted(() => {
   clearInterval(timer);
 });
 
+const clearTime = () => {
+  timeRemaining.value = 0;
+  clearInterval(timer);
+  chrome.storage.sync.set(
+    { startTime: Date.now() - 3 * 60 * 60 * 1000 * 2 },
+    function () {
+      console.log('startTime 设置为三小时前: ' + Date.now())
+    }
+  )
+};
 // 打开图表页面
 const openChart = () => {
   // chrome.runtime.openOptionsPage()
@@ -127,12 +140,12 @@ const generateWordcloud = async () => {
   chrome.tabs.create({ url: chrome.runtime.getURL('src/options/index.html') + '#/wordcloud' });
 }
 
-// const formattedTime = computed(() => {
-//   const hours = Math.floor(timeRemaining.value / 3600);
-//   const minutes = Math.floor((timeRemaining.value % 3600) / 60);
-//   const seconds = timeRemaining.value % 60;
-//   return `${hours} hours ${minutes} minutes ${seconds} seconds`;
-// })
+const formattedTime = computed(() => {
+  const hours = Math.floor(timeRemaining.value / 3600);
+  const minutes = Math.floor((timeRemaining.value % 3600) / 60);
+  const seconds = timeRemaining.value % 60;
+  return `${hours} hours ${minutes} minutes ${seconds} seconds`;
+})
 
 const exportMarkdown = async () => {
   let { todayChat } = await chrome.storage.local.get('todayChat')
