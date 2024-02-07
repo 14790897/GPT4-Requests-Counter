@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.2.0...v1.3.0) (2024-02-07)
+
+
+### Features
+
+* 增加了一个清除剩余时间的按钮 ([62b686f](https://www.github.com/14790897/GPT4-Requests-Counter/commit/62b686f8120125f4716d3de765fdf74eafe56c6e))
+* 对所有仿官方UI的网站生效 ([141c6ce](https://www.github.com/14790897/GPT4-Requests-Counter/commit/141c6ce789a1924c7ad3153b64a526d1e1a3e882))
+
+
+### Bug Fixes
+
+* 修复了画图会计数两次的问题 ([254634c](https://www.github.com/14790897/GPT4-Requests-Counter/commit/254634ce6ed4f8901ac45caba35cffd4b345e0fd))
+* 每天的第一次计数无法识别 ([b3635e9](https://www.github.com/14790897/GPT4-Requests-Counter/commit/b3635e9dddb48dc556499cb18c98229dfda01708))
+* 识别搜索 ([c2835d1](https://www.github.com/14790897/GPT4-Requests-Counter/commit/c2835d1ddec7e816196665f1f0db33285a886506))
+
 ## [1.2.0](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.1.1...v1.2.0) (2024-01-01)
 
 
