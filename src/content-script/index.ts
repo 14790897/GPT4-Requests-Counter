@@ -125,7 +125,7 @@ const callback = async function (mutationsList, observer) {
         let { lastIncrementTime } =
           await chrome.storage.sync.get('lastIncrementTime') // 用于存储上一次增量输出的时间
         // increment = '123455'
-        if ((increment && now - lastIncrementTime >= 100)) {
+        if (increment && now - lastIncrementTime >= 100) {
           //只有间隔0.3秒钟以上才能再增加
           lastIncrementTime = now // 更新上次增加的时间
           await chrome.storage.sync.set({ lastIncrementTime })
@@ -144,7 +144,6 @@ const callback = async function (mutationsList, observer) {
             } catch (error) {
               console.error('获取count失败', error)
             }
-
           }
           //nodeTimers，recordedIncrements只要每天清除就行了，或者不清除，因为我现在发现用户离开网页之后会导致网页出现停止运行的情况，这样这些节点可能突然清除了而计数又会重新触发，进一步导致计数错误
           // 清除旧的定时器（如果存在）
@@ -224,7 +223,7 @@ const debouncedCallback = throttle(callback, 200) // 0.5秒内的变化只会触
 
 const observer = new MutationObserver(debouncedCallback)
 
-const config = { subtree: true, characterData: true}
+const config = { subtree: true, characterData: true }
 observer.observe(document.body, config)
 
 async function updateTextareaAndTime(interfaceStyle: string) {
@@ -316,54 +315,57 @@ chrome.storage.onChanged.addListener((changes) => {
 })
 
 // 创建一个回调函数，该函数将在DOM变化时被调用
-const callbackForImage =  (mutationsList, observer) => {
+const callbackForImage = (mutationsList, observer) => {
   console.log('图片监视的回调函数被触发')
-    for (const mutation of mutationsList) {
-        if (mutation.type === 'childList') {
-            // 检查新添加的节点
-            mutation.addedNodes.forEach(node => {
-                if (
-                  node.nodeType === Node.ELEMENT_NODE &&
-                  node.nodeName === 'DIV' &&
-                  (node.textContent === 'Creating image' || node.textContent.includes('Doing research'))
-                ) {
-                  console.log('检测到内容为 "creating image" 的 div 节点')
-                    const parentNode = findParentNode(node)
-                   updateTimerCountData(parentNode)
-                }
-            });
-        } else if (mutation.type === 'characterData') {
-            // 检查文本内容的变化
-            const parent = mutation.target.parentNode;
-            if (
-              parent &&
-              parent.nodeName === 'DIV' &&
-              (mutation.target.textContent === 'Creating image' || mutation.target.textContent.includes('Doing research'))
-            ) {
-              console.log('div 节点的内容变为 "creating image"')
-              // 在这里执行你需要的操作
-            const parentNode = findParentNode(parent)
-            updateTimerCountData(parentNode)            
-            }
+  for (const mutation of mutationsList) {
+    if (mutation.type === 'childList') {
+      // 检查新添加的节点
+      mutation.addedNodes.forEach((node) => {
+        if (
+          node.nodeType === Node.ELEMENT_NODE &&
+          node.nodeName === 'DIV' &&
+          (node.textContent === 'Creating image' ||
+            node.textContent.includes('Doing research'))
+        ) {
+          console.log('检测到内容为 "creating image" 的 div 节点')
+          const parentNode = findParentNode(node)
+          if (!recordedIncrements.has(parentNode)) {
+            updateTimerCountData(parentNode)
+          }
         }
+      })
+    } else if (mutation.type === 'characterData') {
+      // 检查文本内容的变化
+      const parent = mutation.target.parentNode
+      if (
+        parent &&
+        parent.nodeName === 'DIV' &&
+        (mutation.target.textContent === 'Creating image' ||
+          mutation.target.textContent.includes('Doing research'))
+      ) {
+        console.log('div 节点的内容变为 "creating image"')
+        // 在这里执行你需要的操作
+        const parentNode = findParentNode(parent)
+        if (!recordedIncrements.has(parentNode)) {
+          updateTimerCountData(parentNode)
+        }
+      }
     }
-};
-
+  }
+}
 
 // 创建一个 Mutation Observer 实例并传入回调函数
 const observer2 = new MutationObserver(callbackForImage)
 
 // 配置观察选项
 const config2 = {
-    childList: true, // 观察直接子节点的添加或删除
-    subtree: true, // 观察所有后代节点
-    characterData: true, // 观察节点内容或节点文本的变化
-};
+  childList: true, // 观察直接子节点的添加或删除
+  subtree: true, // 观察所有后代节点
+  characterData: true, // 观察节点内容或节点文本的变化
+}
 
 // 开始观察 document.body 的变化
-observer2.observe(document.body, config2);
-
-
+observer2.observe(document.body, config2)
 
 async function updateTimerCountData(node) {
   // 获取计数和时间列表
@@ -399,23 +401,22 @@ async function updateTimerCountData(node) {
   recordedIncrements.add(node) // 将这个增量添加到已记录的集合中
 }
 
-
 function findParentNode(parentNode) {
   try {
-  while (parentNode) {
-    if (parentNode.getAttribute) {
-      const testId = parentNode.getAttribute('data-testid')
-      // console.log('testId', testId)
-      if (testId && /^conversation-turn-\d+$/.test(testId)) {
-        // 找到了，现在parentNode就是要找的节点
-        console.log('parentNode找到了', parentNode)
-        break
+    while (parentNode) {
+      if (parentNode.getAttribute) {
+        const testId = parentNode.getAttribute('data-testid')
+        // console.log('testId', testId)
+        if (testId && /^conversation-turn-\d+$/.test(testId)) {
+          // 找到了，现在parentNode就是要找的节点
+          console.log('parentNode找到了', parentNode)
+          break
+        }
       }
+      parentNode = parentNode.parentNode
     }
-    parentNode = parentNode.parentNode
-  }
   } catch (error) {
-  console.log('error in findParentNode', error)  
-}
+    console.log('error in findParentNode', error)
+  }
   return parentNode
 }
