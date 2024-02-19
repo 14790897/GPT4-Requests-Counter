@@ -103,10 +103,10 @@ export {}
   const messageLimiter = new MessageLimiter(limit, threeHours)
 
   const callback = async function (mutationsList, observer) {
-    console.log('mutation已被触发')
+    // console.log('mutation已被触发')
     // 检查锁是否已经被设置
     if (isLocked) {
-      console.log('锁已经被设置')
+      // console.log('锁已经被设置')
       return // 如果锁已经被设置，则直接返回，不执行后续代码
     }
 
@@ -142,10 +142,10 @@ export {}
               try {
                 await updateTimerCountData(parentNode)
                 const { countOutput } = await chrome.storage.sync.get('count')
-                console.log(
-                  'countOutput====================================',
-                  countOutput
-                )
+                // console.log(
+                //   'countOutput====================================',
+                //   countOutput
+                // )
                 lastOutput =
                   '1111111111111111111111111111111111111111111111111111111111...'
               } catch (error) {
@@ -185,7 +185,7 @@ export {}
     } catch (error) {
       console.error('Failed to process mutations:', error)
     } finally {
-      console.log('上锁后进入函数主体执行后解锁')
+      // console.log('上锁后进入函数主体执行后解锁')
       isLocked = false // 释放锁
     }
   }
@@ -323,13 +323,13 @@ export {}
   chrome.storage.onChanged.addListener((changes) => {
     if (changes.count) {
       updateTextareaAndTime(interfaceStyle)
-      console.log('count变化了   in chrome.storage.onChanged.addListener')
+      // console.log('count变化了   in chrome.storage.onChanged.addListener')
     }
   })
 
   // 创建一个回调函数，该函数将在DOM变化时被调用
   const callbackForImage = (mutationsList, observer) => {
-    console.log('图片监视的回调函数被触发')
+    // console.log('图片监视的回调函数被触发')
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList') {
         // 检查新添加的节点
@@ -340,7 +340,7 @@ export {}
             (node.textContent === 'Creating image' ||
               node.textContent.includes('Doing research'))
           ) {
-            console.log('检测到内容为 "creating image" 的 div 节点')
+            // console.log('检测到内容为 "creating image" 的 div 节点')
             const parentNode = findParentNode(node)
             if (!recordedIncrements.has(parentNode)) {
               updateTimerCountData(parentNode)
@@ -422,7 +422,7 @@ export {}
           // console.log('testId', testId)
           if (testId && /^conversation-turn-\d+$/.test(testId)) {
             // 找到了，现在parentNode就是要找的节点
-            console.log('parentNode找到了', parentNode)
+            // console.log('parentNode找到了', parentNode)
             break
           }
         }
