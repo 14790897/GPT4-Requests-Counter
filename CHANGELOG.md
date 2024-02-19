@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.3.1](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.3.0...v1.3.1) (2024-02-19)
+
+
+### Bug Fixes
+
+* 去除注释 ([039b980](https://www.github.com/14790897/GPT4-Requests-Counter/commit/039b980166f61dba9cc588f9296927d5f23447a5))
+* 算了，不匹配所有网站 ([ab49578](https://www.github.com/14790897/GPT4-Requests-Counter/commit/ab49578693ce5fa5506158d9d47b0dc3a1809448))
+
 ## [1.3.0](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.2.0...v1.3.0) (2024-02-07)
 
 
