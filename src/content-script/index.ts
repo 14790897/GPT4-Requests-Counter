@@ -39,9 +39,9 @@ export {}
   //   }
   // })
 
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    return true // Indicate that response will be sent asynchronously
-  })
+  // chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  //   return true // Indicate that response will be sent asynchronously
+  // })
   class MessageLimiter {
     private limit: number
     private windowSize: number
@@ -162,9 +162,12 @@ export {}
             const timer = setTimeout(async () => {
               let { todayChat } = await chrome.storage.local.get('todayChat')
               const previousNode = parentNode.previousElementSibling // 获取上一个兄弟节点
-              todayChat += `You:${previousNode.textContent.replace(/You/g, '')}` // 获取用户输入的文本内容
+              todayChat += `You\n:${previousNode.textContent.replace(
+                /You/g,
+                ''
+              )}` // 获取用户输入的文本内容
               todayChat += '\n\n' // 换行
-              todayChat += `ChatGPT:${parentNode.textContent.replace(
+              todayChat += `ChatGPT\n:${parentNode.textContent.replace(
                 /ChatGPT/g,
                 ''
               )}`
@@ -432,5 +435,50 @@ export {}
       console.log('error in findParentNode', error)
     }
     return parentNode
+  }
+
+  // 监听来自扩展其他部分的消息
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // 检查消息是否为导出Markdown的请求
+    if (message.action === 'exportMarkdown') {
+      exportMarkdown(message.data)
+        .then(() => {
+          sendResponse({ status: 'success' })
+        })
+        .catch((error) => {
+          console.error('导出失败:', error)
+          sendResponse({ status: 'error', message: error.toString() })
+        })
+      return true // 保持消息通道开放，以便异步发送响应
+    }
+  })
+  const exportMarkdown = async (todayChat) => {
+    console.log('todayChat', todayChat)
+    if (!todayChat) {
+      todayChat = 'sorry, no chat'
+      console.log('todayChat导出失败：', todayChat)
+      return
+    }
+    // 创建一个 Blob 对象，其内容为 todayChat 字符串，类型为 text/markdown
+    const blob = new Blob([todayChat], { type: 'text/markdown' })
+    download(blob, 'md')
+  }
+  const download = async (blob, fileType: string) => {
+    // 创建一个用于下载的 URL
+    const downloadUrl = window.URL.createObjectURL(blob)
+
+    // 创建一个临时的 a 元素用于触发下载
+    const downloadLink = document.createElement('a')
+    downloadLink.href = downloadUrl
+    const date = new Date().toString()
+    downloadLink.download = `chat-${date}.${fileType}` // 设置下载的文件名
+
+    // 将链接添加到 DOM 中（不可见），触发点击事件，然后移除
+    document.body.appendChild(downloadLink)
+    downloadLink.click()
+    document.body.removeChild(downloadLink)
+
+    // 清理创建的 URL
+    window.URL.revokeObjectURL(downloadUrl)
   }
 })()
