@@ -27,6 +27,10 @@
           <input v-model="applyNewStyle" type="checkbox">
           <span>{{ label }}</span>
         </label>
+        <label class="flex items-center space-x-3">
+          <input v-model="isExportDaily" type="checkbox">
+          <span>export chat everyday?</span>
+        </label>
       </div>
       <div class="flex justify-center space-x-4">
         <!-- <button
@@ -52,6 +56,7 @@ const todayAllCount = ref(0);
 const timeRemaining = ref(0);
 let timer: any;
 const applyNewStyle = ref(true);
+const isExportDaily = ref(false);
 const label = ref("Apply New Style");
 
 // 在组件挂载后设置 Chrome 运行时消息监听器
@@ -75,6 +80,9 @@ onMounted(() => {
     if (result.interfaceStyle) {
       applyNewStyle.value = result.interfaceStyle == 'precise';
     }
+  });
+  chrome.storage.sync.get('isExportDaily', (result) => {
+    isExportDaily.value = result.isExportDaily;
   });
   chrome.runtime.sendMessage({ request: 'getTimeRemaining' }, (response) => {
     timeRemaining.value = response.timeRemaining;
@@ -111,6 +119,10 @@ watch(applyNewStyle, (newVal) => {
     });
     console.log('applyNewStyle', newVal)
   }
+});
+
+watch(isExportDaily, (newVal) => {
+  chrome.storage.sync.set({ isExportDaily: newVal });
 });
 
 // 在组件卸载时清除定时器

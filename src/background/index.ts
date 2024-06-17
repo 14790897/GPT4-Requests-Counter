@@ -72,6 +72,7 @@ chrome.runtime.onInstalled.addListener(async function (details) {
       todayFirstChatTime: 'sorry, no time',
       interfaceStyle: 'normal',
       timestamps: [],
+      isExportDaily: false
     })
     await chrome.storage.local.set({ todayChat: '', timeList : []}),
       console.log('Default values set.')
