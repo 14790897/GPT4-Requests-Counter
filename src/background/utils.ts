@@ -25,10 +25,16 @@ export async function resetDailyCountAndUpdate(lastUpdatedDate: string) {
     const todayFirstChatTime = formattedTime
     await chrome.storage.sync.set({ todayFirstChatTime })
     // 从背景脚本发送导出请求
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
-    const { todayChat } = await chrome.storage.local.get('todayChat')
-    const copy = JSON.parse(JSON.stringify(todayChat))
-    await sendDownload(tabs, copy)
+    const { isExportDaily } = await chrome.storage.sync.get('isExportDaily')
+    if (isExportDaily) {
+      const tabs = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      })
+      const { todayChat } = await chrome.storage.local.get('todayChat')
+      const copy = JSON.parse(JSON.stringify(todayChat))
+      await sendDownload(tabs, copy)
+    }
     // 如果是新的一天，重置今日计数，清空todaychat
     await chrome.storage.sync.set({
       todayAllCount: 0,
