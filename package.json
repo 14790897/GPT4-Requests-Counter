@@ -64,5 +64,5 @@
     "preview": "vite preview"
   },
   "type": "module",
-  "version": "2.3.4"
+  "version": "1.4.0"
 }
