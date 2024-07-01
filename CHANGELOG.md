@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.4.0](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.3.0...v1.4.0) (2024-07-01)
+
+
+### Features
+
+* 可以在每天发送第一条消息的时候导出昨天的记录 ([fdd4c41](https://www.github.com/14790897/GPT4-Requests-Counter/commit/fdd4c41cfa6d2d4e29ab37e84cabedd3663b3024))
+* 在前端增加控制每日导出的按钮 ([1571568](https://www.github.com/14790897/GPT4-Requests-Counter/commit/1571568de86a0c681127c6fae688225698b7248c))
+
+
+### Bug Fixes
+
+* 减少权限 ([bd10e61](https://www.github.com/14790897/GPT4-Requests-Counter/commit/bd10e619e67405e5651643912b7991f23741d2a2))
+* 去除不需要的权限 ([8ee6a50](https://www.github.com/14790897/GPT4-Requests-Counter/commit/8ee6a50bc215a8d45862b78cd01c597e1c9ad2c6))
+* 去除注释 ([039b980](https://www.github.com/14790897/GPT4-Requests-Counter/commit/039b980166f61dba9cc588f9296927d5f23447a5))
+* 忘记加入条件判断 ([bc2f7d2](https://www.github.com/14790897/GPT4-Requests-Counter/commit/bc2f7d2526a57fbdee01b6c802c97b685f6d469c))
+* 算了，不匹配所有网站 ([ab49578](https://www.github.com/14790897/GPT4-Requests-Counter/commit/ab49578693ce5fa5506158d9d47b0dc3a1809448))
+
 ## [1.3.0](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.2.0...v1.3.0) (2024-02-07)
 
 
