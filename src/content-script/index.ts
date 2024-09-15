@@ -1,7 +1,7 @@
 // content.js
 export {}
-;(function () {
-  // 检查页面是否包含ID为'prompt-textarea'的<textarea>元素
+;setTimeout(() => {
+(function () {
   const promptTextarea = document.getElementById('prompt-textarea')
   if (!promptTextarea) {
     return // 如果不存在，则不执行后续操作
@@ -237,7 +237,7 @@ export {}
   observer.observe(document.body, config)
 
   async function updateTextareaAndTime(interfaceStyle: string) {
-    const textarea = getTextArea()
+    const textarea = getTextAreaParagraph()
     if (!textarea) return
 
     try {
@@ -256,20 +256,30 @@ export {}
         }
 
         // Update the placeholder of the textarea
-        textarea.placeholder = `Count: ${count}. ${message}`
+        textarea.innerHTML = `Count: ${count}. ${message}`
       } else {
+        // console.log('设置text')
         const count = await getCountFromStorage()
         const timeRemaining = await getTimeRemaining()
         const formattedTime = formatTime(timeRemaining)
-        textarea.placeholder = `Count: ${count}   Time Remaining: ${formattedTime}`
+        textarea.innerHTML = `Count: ${count}   Time Remaining: ${formattedTime}`
       }
     } catch (error) {
       console.error('Failed to update textarea:', error)
     }
   }
 
-  function getTextArea(): HTMLTextAreaElement | null {
-    return document.getElementById('prompt-textarea') as HTMLTextAreaElement
+  function getTextAreaParagraph(): HTMLElement | null {
+    const textarea = document.querySelector(
+      '[class*="relative"][class*="w-full"][class*="text-center"][class*="text-xs"][class*="text-token-text-secondary"][class*="empty\\:hidden"][class*="md\\:px-\\[60px\\]"]'
+    ) as HTMLElement
+    if (textarea) {
+      // 查找 #prompt-textarea 内部的下一层的 <p> 元素
+      return textarea.querySelector('span')
+    } else {
+      console.log('未找到 可以设置文字的textarea')
+    }
+    return null
   }
 
   async function getCountFromStorage(): Promise<number> {
@@ -482,3 +492,4 @@ export {}
     window.URL.revokeObjectURL(downloadUrl)
   }
 })()
+}, 1000) // 延迟 执行
