@@ -273,13 +273,8 @@ export {}
     const textarea = document.querySelector(
       '[class*="relative"][class*="w-full"][class*="text-center"][class*="text-xs"][class*="text-token-text-secondary"][class*="empty\\:hidden"][class*="md\\:px-\\[60px\\]"]'
     ) as HTMLElement
-    if (textarea) {
-      // 查找 #prompt-textarea 内部的下一层的 <p> 元素
-      return textarea.querySelector('span')
-    } else {
-      console.log('未找到 可以设置文字的textarea')
-    }
-    return null
+
+    return textarea
   }
 
   async function getCountFromStorage(): Promise<number> {
