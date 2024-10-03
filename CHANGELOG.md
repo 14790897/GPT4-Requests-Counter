@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.4.1](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.4.0...v1.4.1) (2024-10-03)
+
+
+### Bug Fixes
+
+* 修复了网页计数的显示 ([2025643](https://www.github.com/14790897/GPT4-Requests-Counter/commit/2025643f0a05b0551552800d20c0692fc62ed3da))
+* 在底部展示对话次数，设置延迟应对remix框架 ([77fdfd3](https://www.github.com/14790897/GPT4-Requests-Counter/commit/77fdfd39944329e21d55cfea11e842f3d2a2a327))
+
 ## [1.4.0](https://www.github.com/14790897/GPT4-Requests-Counter/compare/v1.3.0...v1.4.0) (2024-07-01)
 
 
